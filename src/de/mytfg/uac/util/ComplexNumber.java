@@ -65,7 +65,7 @@ public class ComplexNumber {
 	 * Multiplying by calculating the real and imaginary number apart. The new
 	 * number is saved as the executive object.
 	 */
-	public ComplexNumber cPro(ComplexNumber b) {
+	public ComplexNumber cMul(ComplexNumber b) {
 		double bReal = b.getReal();
 		double bIma = b.getIma();
 		double cReal = (this.real * bReal) - (this.ima * bIma);
@@ -95,7 +95,7 @@ public class ComplexNumber {
 	public ComplexNumber cExp(int exponent) {
 		ComplexNumber c = this.clone();
 		for (int i = 1; i < exponent; i++)
-			c = c.cPro(this);
+			c = c.cMul(this);
 		return c;
 	}
 
