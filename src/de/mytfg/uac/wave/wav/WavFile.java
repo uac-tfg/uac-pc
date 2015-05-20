@@ -6,6 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
+/*
+ * Taken from:
+ * https://stackoverflow.com/questions/12314635/reading-wav-wave-file-into-short-array/28116140#28116140
+ */
+
 public class WavFile {
 	private enum IOState {
 		READING, WRITING, CLOSED
