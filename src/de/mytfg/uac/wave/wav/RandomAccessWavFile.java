@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
 
 /*
  * Derived from WavFile.java, see the author declaration there.
