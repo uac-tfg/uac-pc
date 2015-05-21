@@ -4,6 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
+
+/*
+ * Derived from WavFile.java, see the author declaration there.
+ */
 
 public class RandomAccessWavFile {
 	private enum IOState {
@@ -55,6 +60,9 @@ public class RandomAccessWavFile {
 	}
 
 	public static RandomAccessWavFile newWavFile(File file, int numChannels, long numFrames, int validBits, long sampleRate) throws IOException, WavFileException {
+		if(file.exists())
+			file.delete();
+		
 		// Instantiate new Wavfile and initialise
 		RandomAccessWavFile wavFile = new RandomAccessWavFile();
 		wavFile.file = file;
@@ -75,16 +83,16 @@ public class RandomAccessWavFile {
 		if (sampleRate < 0)
 			throw new WavFileException("Sample rate must be positive");
 
-		// Create output stream for writing data
+		// Create raf file
 		wavFile.raf = new RandomAccessFile(file, "rw");
 
 		// Calculate the chunk sizes
 		long dataChunkSize = wavFile.blockAlign * numFrames;
-		long mainChunkSize = 4 + // Riff Type
+		long headerChunkSize = 4 + // Riff Type
 				8 + // Format ID and size
 				16 + // Format data
-				8 + // Data ID and size
-				dataChunkSize;
+				8; // Data ID and size
+		long mainChunkSize = headerChunkSize + dataChunkSize;
 
 		// Chunks must be word aligned, so if odd number of audio data bytes
 		// adjust the main chunk size
@@ -155,7 +163,7 @@ public class RandomAccessWavFile {
 		RandomAccessWavFile wavFile = new RandomAccessWavFile();
 		wavFile.file = file;
 
-		// Create a new file input stream for reading file data
+		// Create raf file
 		wavFile.raf = new RandomAccessFile(file, "rw");
 
 		// Read the first 12 bytes of the file
@@ -263,6 +271,8 @@ public class RandomAccessWavFile {
 				// data
 				wavFile.raf.skipBytes((int) numChunkBytes);
 			}
+			
+			wavFile.dataStart = wavFile.raf.getFilePointer();
 		}
 
 		// Throw an exception if no data chunk has been found
@@ -314,10 +324,10 @@ public class RandomAccessWavFile {
 	// Sample Seeking
 	// --------------
 	public void seek(long frame, int channel) throws IOException {
-		long pos = dataStart + frame * blockAlign + channel * bytesPerSample;
+		flush();
+		long pos = dataStart + frame * blockAlign + (long) (channel * bytesPerSample);
 		raf.seek(pos);
 		frameCounter = frame;
-		bufferPointer = bytesRead;
 	}
 	
 	// Sample Writing and Reading
@@ -334,7 +344,7 @@ public class RandomAccessWavFile {
 			bufferPointer++;
 		}
 	}
-
+	
 	private long readSample() throws IOException, WavFileException {
 		long val = 0;
 
@@ -634,13 +644,18 @@ public class RandomAccessWavFile {
 
 		return numFramesToWrite;
 	}
+	
+	public void flush() throws IOException {
+		raf.write(buffer, 0, bufferPointer);
+		bufferPointer = 0;
+	}
+
 
 	public void close() throws IOException {
 		if (raf != null) {
 			// Write out anything still in the local buffer
-			if (bufferPointer > 0)
-				raf.write(buffer, 0, bufferPointer);
-
+			flush();
+			
 			// If an extra byte is required for word alignment, add it to the
 			// end
 			if (wordAlignAdjust)
