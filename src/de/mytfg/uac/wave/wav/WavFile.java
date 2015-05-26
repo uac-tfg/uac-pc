@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 /*
- * Taken from:
- * https://stackoverflow.com/questions/12314635/reading-wav-wave-file-into-short-array/28116140#28116140
+ * Taken from: www.labbookpages.co.uk/audio/javaWavFiles.html and auto-formatted
+ * Author: Dr. Andrew Greensted (www.labbookpages.co.uk/home/about.html)
+ * Licensed under: www.labbookpages.co.uk/home/licences.html
  */
 
 public class WavFile {
