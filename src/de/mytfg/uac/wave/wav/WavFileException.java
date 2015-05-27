@@ -1,25 +1,21 @@
 package de.mytfg.uac.wave.wav;
 
 @SuppressWarnings("serial")
-public class WavFileException extends Exception
-{
-	public WavFileException()
-	{
-		super();
-	}
+public class WavFileException extends Exception {
 
-	public WavFileException(String message)
-	{
-		super(message);
-	}
+  public WavFileException() {
+    super();
+  }
 
-	public WavFileException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
+  public WavFileException(String message) {
+    super(message);
+  }
 
-	public WavFileException(Throwable cause) 
-	{
-		super(cause);
-	}
+  public WavFileException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public WavFileException(Throwable cause) {
+    super(cause);
+  }
 }
