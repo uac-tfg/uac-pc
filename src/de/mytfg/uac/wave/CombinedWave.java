@@ -14,10 +14,10 @@ public class CombinedWave {
     if (!folder.exists()) {
       folder.mkdirs();
     }
-    if(!folder.isDirectory()) {
+    if (!folder.isDirectory()) {
       throw new IllegalArgumentException("Folder parameter isn't a directory!");
     }
-    
+
     this.config = config;
     this.folder = folder;
   }
@@ -31,7 +31,7 @@ public class CombinedWave {
 
   public Wave removeWave(int index) {
     Wave old = waves.remove(index);
-    if(old != null) {
+    if (old != null) {
       old.close();
     }
     return old;
@@ -39,14 +39,14 @@ public class CombinedWave {
 
   public boolean removeWave(Object o) {
     boolean exist = waves.remove(o);
-    if(exist) {
+    if (exist) {
       ((Wave) o).close();
     }
     return exist;
   }
 
   public void clear() {
-    for(Wave w : waves) {
+    for (Wave w : waves) {
       w.close();
     }
     waves.clear();
@@ -55,7 +55,7 @@ public class CombinedWave {
   public ArrayList<Wave> getWaves() {
     return waves;
   }
-  
+
   public WaveConfig getConfig() {
     return config;
   }

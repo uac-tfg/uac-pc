@@ -14,7 +14,7 @@ public class WaveConfig {
     this.numChannels = numChannels;
     this.numFrames = numFrames;
   }
-  
+
   public static WaveConfig createDefaultWaveConfig(long numFrames) {
     return new WaveConfig(16, 44100, 1, numFrames);
   }

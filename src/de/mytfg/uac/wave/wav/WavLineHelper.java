@@ -25,7 +25,7 @@ public class WavLineHelper {
       audioStream = AudioSystem.getAudioInputStream(file);
     } catch (IOException | UnsupportedAudioFileException e) {
       throw new RuntimeException(
-              "Unable to play audio file! Refer to inner exception for more information.", e);
+          "Unable to play audio file! Refer to inner exception for more information.", e);
     }
 
     AudioFormat audioFormat = audioStream.getFormat();
@@ -36,7 +36,7 @@ public class WavLineHelper {
       sourceLine.open(audioFormat);
     } catch (LineUnavailableException e) {
       throw new RuntimeException(
-              "Unable to play audio file! Refer to inner exception for more information.", e);
+          "Unable to play audio file! Refer to inner exception for more information.", e);
     }
 
     sourceLine.start();
@@ -48,7 +48,7 @@ public class WavLineHelper {
         nBytesRead = audioStream.read(abData, 0, abData.length);
       } catch (IOException e) {
         throw new RuntimeException(
-                "Unable to play audio file! Refer to inner exception for more information.", e);
+            "Unable to play audio file! Refer to inner exception for more information.", e);
       }
       if (nBytesRead >= 0) {
         sourceLine.write(abData, 0, nBytesRead);
@@ -102,7 +102,7 @@ public class WavLineHelper {
       out.close();
     } catch (LineUnavailableException | IOException e) {
       throw new RuntimeException(
-              "Unable to capture audio file! Refer to inner exception for more information.", e);
+          "Unable to capture audio file! Refer to inner exception for more information.", e);
     }
   }
 }
