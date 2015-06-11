@@ -334,7 +334,7 @@ public class RandomAccessWavFile {
     if (state == IOState.CLOSED) {
       throw new IllegalStateException("Wrong IO state and can not change to desired state!");
     }
-    
+
     try {
       switch (ioState) {
         case WRITING: {
@@ -343,6 +343,7 @@ public class RandomAccessWavFile {
         }
         case READING: {
           bufferPointer = 0;
+          bytesRead = 0;
           ioState = IOState.READY;
           // fall through
         }
@@ -354,8 +355,7 @@ public class RandomAccessWavFile {
           throw new IllegalStateException("Wrong IO state and can not change to desired state!");
         }
       }
-    }
-    catch(IOException e) {
+    } catch (IOException e) {
       throw new IllegalStateException("Wrong IO state and can not change to desired state!");
     }
   }
@@ -555,7 +555,7 @@ public class RandomAccessWavFile {
   }
 
   public int readFrames(double[] sampleBuffer, int offset, int numFramesToRead) throws IOException,
-          WavFileException {
+      WavFileException {
     ensureIoState(IOState.READING);
 
     for (int f = 0; f < numFramesToRead; f++) {
