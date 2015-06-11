@@ -1,22 +1,32 @@
 package de.mytfg.uac.wave;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class CombinedWave {
 
   private WaveConfig config;
+  private File folder;
   private ArrayList<Wave> waves = new ArrayList<>();
 
-  public CombinedWave(WaveConfig config) {
+  public CombinedWave(File folder, WaveConfig config) {
+    if (!folder.exists()) {
+      folder.mkdirs();
+    }
+    if(!folder.isDirectory()) {
+      throw new IllegalArgumentException("Folder parameter isn't a directory!");
+    }
+    
     this.config = config;
+    this.folder = folder;
   }
 
-  public CombinedWave(long numFrames) {
-    this.config = WaveConfig.createDefaultWaveConfig(numFrames);
-  }
-
-  public boolean addWave(Wave e) {
-    return waves.add(e);
+  public Wave newWave() {
+    File f = new File(folder.getAbsolutePath() + "/" + UUID.randomUUID().toString() + ".wav");
+    Wave wave = new Wave(f, config);
+    waves.add(wave);
+    return wave;
   }
 
   public Wave removeWave(int index) {
@@ -44,6 +54,10 @@ public class CombinedWave {
 
   public ArrayList<Wave> getWaves() {
     return waves;
+  }
+  
+  public WaveConfig getConfig() {
+    return config;
   }
 
 }
