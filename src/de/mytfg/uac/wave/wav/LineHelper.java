@@ -14,6 +14,7 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import de.mytfg.uac.wave.CombinedWave;
 import de.mytfg.uac.wave.Wave;
 
 public class LineHelper {
@@ -72,6 +73,12 @@ public class LineHelper {
   
   public static void play(Wave wave) {
     play(wave.getFile());
+  }
+  
+  public static void play(CombinedWave combined) {
+    Wave result = combined.combine();
+    play(result);
+    result.delete();
   }
 
   public static void capture(File file, final int duration, AudioFormat audioFormat) {

@@ -28,8 +28,8 @@ public class Wave {
   public Wave(File file, WaveConfig config) {
     try {
       this.wav =
-          RandomAccessWavFile.newWavFile(file, 1, config.getNumFrames(),
-              config.getValidBits(), config.getSampleRate());
+          RandomAccessWavFile.newWavFile(file, 1, config.getNumFrames(), config.getValidBits(),
+              config.getSampleRate());
       clear(); // allocate file
     } catch (IOException | WavFileException e) {
       throw new RuntimeException(e);
@@ -107,8 +107,9 @@ public class Wave {
    * @param toStart the starting position in this wave
    * @param fromStart the starting position in the given wave
    * @param length the number of frames to add
+   * @param a scale factor, set to 1 for no effect
    */
-  public void addWave(Wave wave, long toStart, long fromStart, long length) {
+  public void addWave(Wave wave, long toStart, long fromStart, long length, double factor) {
     double[] fromBuffer = null;
     double[] toBuffer = null;
     int pointer = BUFFER_SIZE;
@@ -123,7 +124,7 @@ public class Wave {
         toBuffer = this.getFrames(i + toStart, size);
         pointer = 0;
       }
-      toBuffer[pointer] = toBuffer[pointer] + fromBuffer[pointer];
+      toBuffer[pointer] = toBuffer[pointer] + fromBuffer[pointer] * factor;
     }
   }
 
@@ -150,7 +151,15 @@ public class Wave {
       throw new RuntimeException("Error while writing to underlying .wav!", e);
     }
   }
-  
+
+  /**
+   * Deletes the wave
+   */
+  public void delete() {
+    close();
+    getFile().delete();
+  }
+
   public long getSampleRate() {
     return wav.getSampleRate();
   }

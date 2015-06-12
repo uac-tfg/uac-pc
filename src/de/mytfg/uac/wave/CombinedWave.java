@@ -1,6 +1,7 @@
 package de.mytfg.uac.wave;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -54,7 +55,7 @@ public class CombinedWave {
   public Wave removeWave(int index) {
     Wave old = waves.remove(index);
     if (old != null) {
-      releaseWave(old);
+      old.delete();
     }
     return old;
   }
@@ -68,9 +69,30 @@ public class CombinedWave {
   public boolean removeWave(Object o) {
     boolean exist = waves.remove(o);
     if (exist) {
-      releaseWave((Wave) o);
+      ((Wave) o).delete();
     }
     return exist;
+  }
+
+  /**
+   * Combines the wave, i.e. adding all the waves together. Saves the wave in a temporary file prefixed
+   * with "combined".
+   * 
+   * @return
+   */
+  public Wave combine() {
+    File f;
+    try {
+      f = File.createTempFile("combined", ".wav");
+    } catch (IOException e) {
+      throw new RuntimeException("Could not create temporary file for combined wave!", e);
+    }
+    Wave result = new Wave(f, getConfig());
+    double scale = 1d / getWaves().size();
+    for (Wave w : getWaves()) {
+      result.addWave(w, 0, 0, result.getNumFrames(), scale);
+    }
+    return result;
   }
 
   /**
@@ -78,16 +100,11 @@ public class CombinedWave {
    */
   public void clear() {
     for (Wave w : waves) {
-      releaseWave(w);
+      w.delete();
     }
     waves.clear();
   }
 
-  private static void releaseWave(Wave w) {
-    w.close();
-    w.getFile().delete();
-  }
-  
   public ArrayList<Wave> getWaves() {
     return waves;
   }
