@@ -14,12 +14,13 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class WavLineHelper {
+import de.mytfg.uac.wave.Wave;
+
+public class LineHelper {
 
   private static final int BUFFER_SIZE = 128000;
 
   public static void play(File file) {
-
     AudioInputStream audioStream;
     try {
       audioStream = AudioSystem.getAudioInputStream(file);
@@ -63,6 +64,14 @@ public class WavLineHelper {
     for (int i = 0; i < times; i++) {
       play(file);
     }
+  }
+  
+  public static void play(WavFile wavFile) {
+    play(wavFile.getFile());
+  }
+  
+  public static void play(Wave wave) {
+    play(wave.getFile());
   }
 
   public static void capture(File file, final int duration, AudioFormat audioFormat) {
