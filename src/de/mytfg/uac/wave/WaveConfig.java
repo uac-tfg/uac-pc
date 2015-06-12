@@ -1,5 +1,10 @@
 package de.mytfg.uac.wave;
 
+/**
+ * Config for a wave object.
+ * 
+ * @author Tilman Hoffbauer
+ */
 public class WaveConfig {
 
   private int validBits;
@@ -7,6 +12,14 @@ public class WaveConfig {
   private int numChannels;
   private long numFrames;
 
+  /**
+   * Constructs a new config.
+   * 
+   * @param validBits
+   * @param sampleRate
+   * @param numChannels
+   * @param numFrames
+   */
   public WaveConfig(int validBits, int sampleRate, int numChannels, long numFrames) {
     super();
     this.validBits = validBits;
@@ -15,6 +28,14 @@ public class WaveConfig {
     this.numFrames = numFrames;
   }
 
+  /**
+   * Creates a new default config. Default values are:<br>
+   * validBits = 16
+   * sampleRate = 44100
+   * 
+   * @param numFrames
+   * @return the wave config
+   */
   public static WaveConfig createDefaultWaveConfig(long numFrames) {
     return new WaveConfig(16, 44100, 1, numFrames);
   }
