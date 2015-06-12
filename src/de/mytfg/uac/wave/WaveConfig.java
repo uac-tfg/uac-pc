@@ -9,7 +9,6 @@ public class WaveConfig {
 
   private int validBits;
   private int sampleRate;
-  private int numChannels;
   private long numFrames;
 
   /**
@@ -20,11 +19,10 @@ public class WaveConfig {
    * @param numChannels
    * @param numFrames
    */
-  public WaveConfig(int validBits, int sampleRate, int numChannels, long numFrames) {
+  public WaveConfig(int validBits, int sampleRate, long numFrames) {
     super();
     this.validBits = validBits;
     this.sampleRate = sampleRate;
-    this.numChannels = numChannels;
     this.numFrames = numFrames;
   }
 
@@ -37,7 +35,7 @@ public class WaveConfig {
    * @return the wave config
    */
   public static WaveConfig createDefaultWaveConfig(long numFrames) {
-    return new WaveConfig(16, 44100, 1, numFrames);
+    return new WaveConfig(16, 44100, numFrames);
   }
 
   public int getValidBits() {
@@ -54,14 +52,6 @@ public class WaveConfig {
 
   public void setSampleRate(int sampleRate) {
     this.sampleRate = sampleRate;
-  }
-
-  public int getNumChannels() {
-    return numChannels;
-  }
-
-  public void setNumChannels(int numChannels) {
-    this.numChannels = numChannels;
   }
 
   public long getNumFrames() {

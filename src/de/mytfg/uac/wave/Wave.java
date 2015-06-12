@@ -28,7 +28,7 @@ public class Wave {
   public Wave(File file, WaveConfig config) {
     try {
       this.wav =
-          RandomAccessWavFile.newWavFile(file, config.getNumChannels(), config.getNumFrames(),
+          RandomAccessWavFile.newWavFile(file, 1, config.getNumFrames(),
               config.getValidBits(), config.getSampleRate());
       clear(); // allocate file
     } catch (IOException | WavFileException e) {
