@@ -109,7 +109,7 @@ public class Wave {
    * @param length the number of frames to add
    * @param a scale factor, set to 1 for no effect
    */
-  public void addWave(Wave wave, long toStart, long fromStart, long length, double factor) {
+  public void addWave(Wave wave, long toStart, long fromStart, long length, double toFactor, double fromFactor) {
     double[] fromBuffer = null;
     double[] toBuffer = null;
     int pointer = BUFFER_SIZE;
@@ -124,8 +124,37 @@ public class Wave {
         toBuffer = this.getFrames(i + toStart, size);
         pointer = 0;
       }
-      toBuffer[pointer] = toBuffer[pointer] + fromBuffer[pointer] * factor;
+      toBuffer[pointer] = toBuffer[pointer] * toFactor + fromBuffer[pointer] * fromFactor;
     }
+  }
+  
+  public void addWave(Wave wave, long toStart, long fromStart, long length, double fromFactor) {
+    addWave(wave, toStart, fromStart, length, 1, fromFactor);
+  }
+
+  /**
+   * Gets the range of the wave, that is the minimum and maximum amplitude.
+   * 
+   * @return the range, first element is the minimum, second the maximum
+   */
+  public double[] getRange() {
+    double[] range = new double[] {0, 0};
+    double[] buffer = null;
+    int pointer = BUFFER_SIZE;
+    for (long i = 0; i < getNumFrames(); i++) {
+      if (pointer == BUFFER_SIZE) {
+        int size = (int) Math.min(BUFFER_SIZE, getNumFrames() - i);
+        buffer = getFrames(i, size);
+      }
+      double val = buffer[pointer];
+      if (val < range[0]) {
+        range[0] = val;
+      }
+      if (val > range[1]) {
+        range[1] = val;
+      }
+    }
+    return range;
   }
 
   /**
