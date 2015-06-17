@@ -11,7 +11,7 @@ import java.io.RandomAccessFile;
 
 public class RandomAccessWavFile {
 
-  private enum IOState {
+  public enum IOState {
     READING, WRITING, READY, CLOSED
   };
 
@@ -677,5 +677,9 @@ public class RandomAccessWavFile {
 
   public File getFile() {
     return file;
+  }
+  
+  public IOState getIoState() {
+    return ioState;
   }
 }
