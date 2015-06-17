@@ -356,7 +356,7 @@ public class RandomAccessWavFile {
         }
       }
     } catch (IOException e) {
-      throw new IllegalStateException("Wrong IO state and can not change to desired state!");
+      throw new IllegalStateException("Wrong IO state and can not change to desired state!", e);
     }
   }
 
