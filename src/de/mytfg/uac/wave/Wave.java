@@ -15,7 +15,7 @@ import de.mytfg.uac.wave.wav.WavFileException;
  */
 public class Wave {
 
-  private static final int BUFFER_SIZE = 1024;
+  public static final int BUFFER_SIZE = 1024;
 
   private RandomAccessWavFile wav;
 
