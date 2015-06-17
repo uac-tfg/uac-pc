@@ -28,7 +28,7 @@ public class WaveConfig {
 
   /**
    * Creates a new default config. Default values are:<br>
-   * validBits = 16
+   * validBits = 16 <br>
    * sampleRate = 44100
    * 
    * @param numFrames

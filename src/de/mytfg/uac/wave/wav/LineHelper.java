@@ -66,15 +66,15 @@ public class LineHelper {
       play(file);
     }
   }
-  
+
   public static void play(WavFile wavFile) {
     play(wavFile.getFile());
   }
-  
+
   public static void play(Wave wave) {
     play(wave.getFile());
   }
-  
+
   public static void play(CombinedWave combined) {
     Wave result = combined.combine();
     play(result);
@@ -99,7 +99,6 @@ public class LineHelper {
           try {
             Thread.sleep(duration);
           } catch (InterruptedException ex) {
-            ex.printStackTrace();
           }
           line.stop();
         }

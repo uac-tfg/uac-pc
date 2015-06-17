@@ -141,10 +141,11 @@ public class Wave {
     double[] range = new double[] {0, 0};
     double[] buffer = null;
     int pointer = BUFFER_SIZE;
-    for (long i = 0; i < getNumFrames(); i++) {
+    for (long i = 0; i < getNumFrames(); i++, pointer++) {
       if (pointer == BUFFER_SIZE) {
         int size = (int) Math.min(BUFFER_SIZE, getNumFrames() - i);
         buffer = getFrames(i, size);
+        pointer = 0;
       }
       double val = buffer[pointer];
       if (val < range[0]) {
