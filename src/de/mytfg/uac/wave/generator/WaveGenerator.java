@@ -1,4 +1,6 @@
-package de.mytfg.uac.wave;
+package de.mytfg.uac.wave.generator;
+
+import de.mytfg.uac.wave.Wave;
 
 public abstract class WaveGenerator {
 
