@@ -25,6 +25,7 @@ public abstract class WaveGenerator {
 
         int size = (int) Math.min(Wave.BUFFER_SIZE, to - i);
         buffer = new double[size];
+        pointer = 0;
       }
       double val = generateSample(wave, i, i - from, to - i);
       buffer[pointer] = val;
