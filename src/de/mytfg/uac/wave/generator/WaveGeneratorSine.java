@@ -12,7 +12,7 @@ public class WaveGeneratorSine extends WaveGenerator {
   
   @Override
   protected double generateSample(Wave wave, long abs, long rel, long left) {
-    return Math.sin(frequency * 2 * Math.PI * abs * (1 / wave.getSampleRate()));
+    return Math.sin(frequency * 2 * Math.PI * abs * (1d / wave.getSampleRate()));
   }
 
 }
