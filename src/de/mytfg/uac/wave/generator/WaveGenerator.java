@@ -18,7 +18,7 @@ public abstract class WaveGenerator {
     long to = from + length;
 
     for (long i = from; i < to; i++, pointer++) {
-      if (pointer == buffer.length) {
+      if (buffer == null || pointer == buffer.length) {
         if (buffer != null) {
           wave.setFrames(i - buffer.length, buffer);
         }
