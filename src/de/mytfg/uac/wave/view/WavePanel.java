@@ -2,20 +2,24 @@ package de.mytfg.uac.wave.view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
@@ -23,6 +27,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
 import de.mytfg.uac.wave.CombinedWave;
+import de.mytfg.uac.wave.Wave;
 import de.mytfg.uac.wave.view.WaveVisualizerPanel.LabelMethod;
 
 public class WavePanel extends JPanel implements ChangeListener, ActionListener, ComponentListener {
@@ -40,6 +45,7 @@ public class WavePanel extends JPanel implements ChangeListener, ActionListener,
   private JSpinner spinnerStart;
   private WaveVisualizerPanel waveVisualizerPanel;
 
+
   /**
    * Create the panel.
    */
@@ -47,9 +53,9 @@ public class WavePanel extends JPanel implements ChangeListener, ActionListener,
     this.wave = wave;
 
     addComponentListener(this);
-    
+
     setLayout(new BorderLayout(0, 20));
-    
+
     JPanel visualPanel = new JPanel();
     add(visualPanel, BorderLayout.CENTER);
     visualPanel.setLayout(new BorderLayout(0, 0));
@@ -62,7 +68,7 @@ public class WavePanel extends JPanel implements ChangeListener, ActionListener,
 
     JPanel settingsPanel = new JPanel();
     add(settingsPanel, BorderLayout.SOUTH);
-    settingsPanel.setLayout(new GridLayout(2, 1, 0, 0));
+    settingsPanel.setLayout(new GridLayout(3, 1, 0, 0));
 
     JPanel panelPos = new JPanel();
     settingsPanel.add(panelPos);
@@ -132,6 +138,42 @@ public class WavePanel extends JPanel implements ChangeListener, ActionListener,
     comboBoxUnit.setModel(new DefaultComboBoxModel(LabelMethod.values()));
     panelLabel.add(comboBoxUnit);
     comboBoxUnit.addActionListener(this);
+
+    JPanel panelWaves = new JPanel();
+    settingsPanel.add(panelWaves);
+
+    CheckBoxList wavesList = new CheckBoxList();
+    ArrayList<Wave> waves = wave.getWaves();
+    JCheckBox[] checkBoxes = new JCheckBox[waves.size() + 1];
+    for (int i = 0; i < waves.size(); i++) {
+      JCheckBox box = new JCheckBox();
+      box.setText(String.valueOf(i));
+      checkBoxes[i] = box;
+    }
+    JCheckBox combinedBox = new JCheckBox();
+    combinedBox.setText("combined");
+    checkBoxes[checkBoxes.length - 1] = combinedBox;
+    for (int i = 0; i < checkBoxes.length; i++) {
+      JCheckBox box = checkBoxes[i];
+      box.addItemListener(new ItemListener() {
+        private int i;
+
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+          waveVisualizerPanel.setWaveDrawn(i, box.isSelected());
+        }
+
+        public ItemListener set(int i) {
+          this.i = i;
+          System.out.println(i);
+          return this;
+        }
+      }.set(i));
+      box.setSelected(true);
+    }
+    wavesList.setListData(checkBoxes);
+
+    panelWaves.add(wavesList);
   }
 
   private void updateWaveVisualizerPanel() {
@@ -154,20 +196,25 @@ public class WavePanel extends JPanel implements ChangeListener, ActionListener,
   public void stateChanged(ChangeEvent e) {
     updateWaveVisualizerPanel();
   }
+
   @Override
   public void actionPerformed(ActionEvent e) {
     updateWaveVisualizerPanel();
   }
+
   @Override
   public void componentResized(ComponentEvent e) {
     updateWaveVisualizerPanel();
   }
+
   @Override
   public void componentShown(ComponentEvent e) {
     updateWaveVisualizerPanel();
   }
+
   @Override
   public void componentHidden(ComponentEvent e) {}
+
   @Override
   public void componentMoved(ComponentEvent e) {}
 }

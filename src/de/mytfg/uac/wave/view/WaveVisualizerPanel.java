@@ -1,6 +1,7 @@
 package de.mytfg.uac.wave.view;
 
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -16,6 +17,8 @@ public class WaveVisualizerPanel extends JPanel {
 
   private CombinedWave wave;
 
+  private boolean[] drawWave;
+  
   private long from = 0;
   private int length = 1800;
   private double distance = 1;
@@ -47,6 +50,10 @@ public class WaveVisualizerPanel extends JPanel {
 
   public WaveVisualizerPanel(CombinedWave wave) {
     this.wave = wave;
+    this.drawWave = new boolean[wave.getWaves().size() + 1];
+    for(int i = 0; i < drawWave.length; i++) {
+      drawWave[i] = true;
+    }
   }
 
   @Override
@@ -62,7 +69,17 @@ public class WaveVisualizerPanel extends JPanel {
     drawAxis(g);
 
     g.translate(0, (int) scale);
-    for (Wave w : wave.getWaves()) {
+    ArrayList<Wave> waves = wave.getWaves();
+    for (int i = 0; i <= waves.size(); i++) {
+      if(!drawWave[i]) {
+        continue;
+      }
+      Wave w;
+      if(i == waves.size()) {
+        w = wave.combine();
+      } else {
+        w = waves.get(i);
+      }
       drawWave(g, w);
     }
   }
@@ -185,6 +202,15 @@ public class WaveVisualizerPanel extends JPanel {
 
   public CombinedWave getWave() {
     return wave;
+  }
+  
+  public boolean isWaveDrawn(int i) {
+    return drawWave[i];
+  }
+  
+  public void setWaveDrawn(int i, boolean draw) {
+    drawWave[i] = draw;
+    repaint();
   }
 
 }
