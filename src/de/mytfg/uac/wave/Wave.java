@@ -27,9 +27,8 @@ public class Wave {
    */
   public Wave(File file, WaveConfig config) {
     try {
-      this.wav =
-          RandomAccessWavFile.newWavFile(file, 1, config.getNumFrames(), config.getValidBits(),
-              config.getSampleRate());
+      this.wav = RandomAccessWavFile.newWavFile(file, 1, config.getNumFrames(),
+          config.getValidBits(), config.getSampleRate());
       clear(); // allocate file
     } catch (IOException | WavFileException e) {
       throw new RuntimeException(e);
@@ -109,7 +108,8 @@ public class Wave {
    * @param length the number of frames to add
    * @param a scale factor, set to 1 for no effect
    */
-  public void addWave(Wave wave, long toStart, long fromStart, long length, double toFactor, double fromFactor) {
+  public void addWave(Wave wave, long toStart, long fromStart, long length, double toFactor,
+      double fromFactor) {
     double[] fromBuffer = null;
     double[] toBuffer = null;
     int pointer = BUFFER_SIZE;
@@ -127,7 +127,7 @@ public class Wave {
       toBuffer[pointer] = toBuffer[pointer] * toFactor + fromBuffer[pointer] * fromFactor;
     }
   }
-  
+
   public void addWave(Wave wave, long toStart, long fromStart, long length, double fromFactor) {
     addWave(wave, toStart, fromStart, length, 1, fromFactor);
   }
@@ -156,6 +156,36 @@ public class Wave {
       }
     }
     return range;
+  }
+
+  /**
+   * Gets the magnitude of a specific frequency in the signal.
+   * 
+   * @return the real magnitude of the given frequency in the signal
+   */
+
+  public double getFrequencyMagnitude(long targetFrequency) {
+    long blockSize = this.getNumFrames();
+    long k = (long) (0.5 + ((blockSize * targetFrequency) / this.getSampleRate()));
+    double omega = (2.0 * Math.PI * k) / blockSize;
+    double cosine = Math.cos(omega);
+    double coeff = 2.0 * cosine;
+    double Q1 = 0;
+    double Q2 = 0;
+    double Q0;
+    int pointer = BUFFER_SIZE;
+    double[] buffer = null;
+    for (long i = 0; i < getNumFrames(); i++, pointer++) {
+      if (pointer == BUFFER_SIZE) {
+        int size = (int) Math.min(BUFFER_SIZE, getNumFrames() - i);
+        buffer = getFrames(i, size);
+        pointer = 0;
+      }
+      Q0 = coeff * Q1 - Q2 + buffer[pointer];
+      Q2 = Q1;
+      Q1 = Q0;
+    }
+    return (Q1 * Q1 + Q2 * Q2 - Q1 * Q2 * coeff);
   }
 
   /**
