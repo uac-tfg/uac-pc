@@ -6,6 +6,7 @@ public abstract class WaveGenerator {
 
   /**
    * Generates a wave. Overwrites the wave in the specified part.
+   * The scale factor is defaulted to 1.
    * 
    * @param wave the wave to write to
    * @param from start of data
@@ -13,6 +14,19 @@ public abstract class WaveGenerator {
    * @return the wave given for chaining
    */
   public Wave generate(Wave wave, long from, long length) {
+    return generate(wave, from, length, 1d);
+  }
+  
+  /**
+   * Generates a wave. Overwrites the wave in the specified part.
+   * 
+   * @param wave the wave to write to
+   * @param from start of data
+   * @param length length of data
+   * @param factor the scale factor
+   * @return the wave given for chaining
+   */
+  public Wave generate(Wave wave, long from, long length, double factor) {
     double[] buffer = null;
     int pointer = Wave.BUFFER_SIZE;
     long to = from + length;
@@ -27,7 +41,7 @@ public abstract class WaveGenerator {
         buffer = new double[size];
         pointer = 0;
       }
-      double val = generateSample(wave, i, i - from, to - i);
+      double val = generateSample(wave, i, i - from, to - i) * factor;
       buffer[pointer] = val;
     }
     return wave;
