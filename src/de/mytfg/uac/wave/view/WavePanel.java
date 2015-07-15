@@ -165,7 +165,6 @@ public class WavePanel extends JPanel implements ChangeListener, ActionListener,
 
         public ItemListener set(int i) {
           this.i = i;
-          System.out.println(i);
           return this;
         }
       }.set(i));
