@@ -31,11 +31,10 @@ public class WaveGeneratorSine extends WaveGenerator {
   @Override
   protected double generateSample(Wave wave, long abs, long rel, long left) {
     double period = frequency * 2 * Math.PI;
-    double time = abs * (1d / wave.getSampleRate());
+    double time = rel * (1d / wave.getSampleRate());
     double shift = 2 * Math.PI * phase;
     double val = Math.sin(period * time + shift);
     return val;
-//    return Math.sin(frequency * 2 * Math.PI * abs * (1d / wave.getSampleRate()));
   }
 
 }
