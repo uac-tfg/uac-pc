@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
+import de.mytfg.uac.util.ComplexNumber;
 import de.mytfg.uac.wave.wav.RandomAccessWavFile;
 import de.mytfg.uac.wave.wav.WavFileException;
 
@@ -163,16 +164,38 @@ public class Wave {
    * 
    * @return the real magnitude of the given frequency in the signal
    */
-
-  public double getFrequencyMagnitude(long targetFrequency) {
+  public double getFrequencyMagnitude(int targetFrequency) {
+    ComplexNumber c = new ComplexNumber();
+    c = this.initGoertzel(targetFrequency);
+    return (c.getReal() * c.getReal() + c.getIma() * c.getIma());
+  }
+  /**
+   * Uses Goertzel Algorithm for giving the phase shift of a specific frequency in the signal
+   * 
+   * @param targetFrequency
+   * @return the phaseshift in values 0-1
+   */
+  public double getPhaseShift(int targetFrequency) {
+    ComplexNumber c = new ComplexNumber();
+    c = this.initGoertzel(targetFrequency);
+    return (Math.atan((c.getIma() / c.getReal())) / 2);
+  }
+  
+  /**
+   * Uses Goertzel Algorithm on the class
+   * 
+   * @param targetFrequency
+   * @return a complex number, containing real. and imag. part
+   */
+  public ComplexNumber initGoertzel(int targetFrequency) {
     long blockSize = this.getNumFrames();
-    long k = (long) (0.5 + ((blockSize * targetFrequency) / this.getSampleRate()));
-    double omega = (2.0 * Math.PI * k) / blockSize;
-    double cosine = Math.cos(omega);
-    double coeff = 2.0 * cosine;
-    double Q1 = 0;
-    double Q2 = 0;
-    double Q0;
+    double omega = (2.0 * Math.PI * ((int) (0.5 + ((blockSize * targetFrequency) / this.getSampleRate()))) / blockSize);
+    double sin = Math.sin(omega);
+    double cos = Math.cos(omega);
+    double a1 = 2.0 * cos;
+    double d1 = 0;
+    double d2 = 0;
+    double d0;
     int pointer = BUFFER_SIZE;
     double[] buffer = null;
     for (long i = 0; i < getNumFrames(); i++, pointer++) {
@@ -181,11 +204,12 @@ public class Wave {
         buffer = getFrames(i, size);
         pointer = 0;
       }
-      Q0 = coeff * Q1 - Q2 + buffer[pointer];
-      Q2 = Q1;
-      Q1 = Q0;
+      d0 = a1 * d1 - d2 + buffer[pointer];
+      d2 = d1;
+      d1 = d0;
     }
-    return (Q1 * Q1 + Q2 * Q2 - Q1 * Q2 * coeff);
+    ComplexNumber c = new ComplexNumber(d2 * sin, d1 - d2 * cos);
+    return c;
   }
 
   /**

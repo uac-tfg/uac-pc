@@ -22,6 +22,11 @@ public class ComplexNumber {
 	 * @param real
 	 * @param ima
 	 */
+	public ComplexNumber(){
+	    this.real = 0;
+        this.ima = 0;
+	}
+	
 	public ComplexNumber(double real, double ima) {
 		this.real = real;
 		this.ima = ima;
