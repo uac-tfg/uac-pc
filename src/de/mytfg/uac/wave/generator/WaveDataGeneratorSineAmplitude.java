@@ -2,12 +2,12 @@ package de.mytfg.uac.wave.generator;
 
 import de.mytfg.uac.wave.Wave;
 
-public class WaveDataGeneratorSine extends WaveDataGenerator {
+public class WaveDataGeneratorSineAmplitude extends WaveDataGenerator {
 
   private WaveGeneratorSine simple;
   private int bitFrequency;
   
-  public WaveDataGeneratorSine(int frequency) {
+  public WaveDataGeneratorSineAmplitude(int frequency) {
     simple = new WaveGeneratorSine(frequency);
     bitFrequency = frequency / 2;
   }
