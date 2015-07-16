@@ -9,7 +9,7 @@ public class WaveDataGeneratorSine extends WaveDataGenerator {
   
   public WaveDataGeneratorSine(int frequency) {
     simple = new WaveGeneratorSine(frequency);
-    bitFrequency = frequency / 4;
+    bitFrequency = frequency / 2;
   }
   
   @Override

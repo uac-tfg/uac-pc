@@ -44,19 +44,11 @@ public abstract class WaveDataGenerator {
         samplePointer = 0;
       }
       long rel = i - from;
-      byte bit = ByteUtil.getBit(data, rel);
-      double val = generateSample(wave, bit, i, i - from, to - i) * factor;
-      sampleBuffer[samplePointer] = val;
+      byte bit = ByteUtil.getBit(data, (long) ((rel / (double) wave.getSampleRate()) * bitFrequency));
+      double val = generateSample(wave, bit, i, rel, to - i);
+      sampleBuffer[samplePointer] = val * factor;
     }
     return wave;
-  }
-
-  private static byte getBit(byte[] data, long pos) {
-    int posByte = (int) (pos / 8);
-    int posBit = (int) (pos % 8);
-    byte valByte = data[posByte];
-    byte valBit = (byte) (valByte >> (8 - (posBit + 1)) & 0x0001);
-    return valBit;
   }
 
   protected abstract double generateSample(Wave wave, byte b, long abs, long rel, long left);
