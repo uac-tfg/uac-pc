@@ -100,11 +100,11 @@ public class WaveVisualizerPanel extends JPanel {
   private void drawWave(Graphics g, Wave wave) {
     double[] data = wave.getFrames(from, length);
     double last = data[0];
-    int lastY = (int) (last * scale);
+    int lastY = (int) (last * scale * -1);
     int lastX = 0;
     for (int i = 1; i < data.length; i++) {
       double next = data[i];
-      int nextY = (int) (last * scale);
+      int nextY = (int) (last * scale * -1);
       int nextX = (int) (i * distance);
       g.drawLine(lastX, lastY, nextX, nextY);
       last = next;
