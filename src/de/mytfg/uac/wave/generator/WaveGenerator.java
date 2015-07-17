@@ -31,10 +31,14 @@ public abstract class WaveGenerator {
     int pointer = Wave.BUFFER_SIZE;
     long to = from + length;
 
-    for (long i = from; i < to; i++, pointer++) {
-      if (buffer == null || pointer == buffer.length) {
+    for (long i = from; i <= to; i++, pointer++) {
+      if (buffer == null || pointer >= buffer.length) {
         if (buffer != null) {
           wave.setFrames(i - buffer.length, buffer);
+        }
+        
+        if (i == to) {
+          break;
         }
 
         int size = (int) Math.min(Wave.BUFFER_SIZE, to - i);

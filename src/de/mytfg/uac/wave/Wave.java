@@ -114,10 +114,14 @@ public class Wave {
     double[] fromBuffer = null;
     double[] toBuffer = null;
     int pointer = BUFFER_SIZE;
-    for (long i = 0; i < length; i++, pointer++) {
-      if (pointer >= BUFFER_SIZE) {
+    for (long i = 0; i <= length; i++, pointer++) {
+      if (fromBuffer == null || toBuffer == null || pointer >= fromBuffer.length) {
         if (fromBuffer != null && toBuffer != null) {
           setFrames(i + toStart - toBuffer.length, toBuffer);
+        }
+        
+        if (i == length) {
+          break;
         }
 
         int size = (int) Math.min(BUFFER_SIZE, length - i);
