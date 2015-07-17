@@ -164,21 +164,47 @@ public class Wave {
    * 
    * @return the real magnitude of the given frequency in the signal
    */
-  public double getFrequencyMagnitude(int targetFrequency) {
+  public double getFrequencyMagnitude(int targetFrequency, long from, long length) {
     ComplexNumber c = new ComplexNumber();
-    c = this.initGoertzel(targetFrequency);
+    c = this.initGoertzel(targetFrequency, from, length);
     return (c.getReal() * c.getReal() + c.getIma() * c.getIma());
   }
+
+  public double getFrequencyMagnitude(int targetFrequency) {
+    long from = 0;
+    long length = this.getNumFrames();
+    return this.getFrequencyMagnitude(targetFrequency, from, length);
+  }
+
   /**
    * Uses Goertzel Algorithm for giving the phase shift of a specific frequency in the signal
    * 
    * @param targetFrequency
    * @return the phaseshift in values 0-1
    */
-  public double getPhaseShift(int targetFrequency) {
+  public double getPhaseShift(int targetFrequency, long from, long length) {
     ComplexNumber c = new ComplexNumber();
-    c = this.initGoertzel(targetFrequency);
-    return (Math.atan((c.getIma() / c.getReal())) / 2);
+    c = this.initGoertzel(targetFrequency, from, length);
+    // double r = (Math.atan2(c.getIma(), c.getReal()) / (2 * Math.PI));
+    double r = (Math.atan(c.getIma() / c.getReal()));
+    if (c.getReal() < 0) {
+      r -= (Math.PI / 2);
+    } else {
+      r += (Math.PI / 2);
+    }
+//    r += Math.PI / 2;
+    r = r / (2 * Math.PI);
+//    r = 1 - r - 0.2440179420198066;
+//    if (r > 1) {
+//      r -= 1;
+//    }
+    return r;
+  }
+
+  public double getPhaseShift(int targetFrequency) {
+    long from = 0;
+    long length = this.getNumFrames();
+    return this.getPhaseShift(targetFrequency, from, length);
   }
   
   /**
@@ -187,9 +213,12 @@ public class Wave {
    * @param targetFrequency
    * @return a complex number, containing real. and imag. part
    */
-  public ComplexNumber initGoertzel(int targetFrequency) {
-    long blockSize = this.getNumFrames();
-    double omega = (2.0 * Math.PI * ((int) (0.5 + ((blockSize * targetFrequency) / this.getSampleRate()))) / blockSize);
+  public ComplexNumber initGoertzel(int targetFrequency, long from, long length) {
+    if (from + length > this.getNumFrames() || from < 0 || length <= 0) {
+      throw new IndexOutOfBoundsException("from + length is out of range!");
+    }
+    double omega = (2.0 * Math.PI
+        * ((int) (0.5 + ((length * targetFrequency) / this.getSampleRate()))) / length);
     double sin = Math.sin(omega);
     double cos = Math.cos(omega);
     double a1 = 2.0 * cos;
@@ -198,7 +227,7 @@ public class Wave {
     double d0;
     int pointer = BUFFER_SIZE;
     double[] buffer = null;
-    for (long i = 0; i < getNumFrames(); i++, pointer++) {
+    for (long i = from; i < (from + length); i++, pointer++) {
       if (pointer == BUFFER_SIZE) {
         int size = (int) Math.min(BUFFER_SIZE, getNumFrames() - i);
         buffer = getFrames(i, size);
