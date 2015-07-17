@@ -51,7 +51,7 @@ public abstract class WaveDataGenerator {
     return wave;
   }
 
-  protected abstract double generateSample(Wave wave, byte b, long abs, long rel, long left);
+  public abstract double generateSample(Wave wave, byte b, long abs, long rel, long left);
   
   public abstract int getBitFrequency();
   

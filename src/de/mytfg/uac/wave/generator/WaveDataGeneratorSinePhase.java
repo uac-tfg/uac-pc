@@ -8,14 +8,18 @@ public class WaveDataGeneratorSinePhase extends WaveDataGenerator {
   private WaveGeneratorSine sineB;
   private int bitFrequency;
   
-  public WaveDataGeneratorSinePhase(int frequency) {
+  public WaveDataGeneratorSinePhase(int frequency, int bitFrequency) {
     this.sineA = new WaveGeneratorSine(frequency, 0);
     this.sineB = new WaveGeneratorSine(frequency, 0.5d);
-    this.bitFrequency = frequency / 2;
+    this.bitFrequency = bitFrequency;
+  }
+  
+  public WaveDataGeneratorSinePhase(int frequency) {
+    this(frequency, frequency / 2);
   }
 
   @Override
-  protected double generateSample(Wave wave, byte b, long abs, long rel, long left) {
+  public double generateSample(Wave wave, byte b, long abs, long rel, long left) {
     double val;
     if(b == 0) {
       val = sineA.generateSample(wave, abs, rel, left);

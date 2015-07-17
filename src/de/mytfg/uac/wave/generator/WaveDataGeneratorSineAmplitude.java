@@ -7,13 +7,17 @@ public class WaveDataGeneratorSineAmplitude extends WaveDataGenerator {
   private WaveGeneratorSine simple;
   private int bitFrequency;
   
-  public WaveDataGeneratorSineAmplitude(int frequency) {
+  public WaveDataGeneratorSineAmplitude(int frequency, int bitFrequency) {
     simple = new WaveGeneratorSine(frequency);
-    bitFrequency = frequency / 2;
+    this.bitFrequency = bitFrequency;
+  }
+  
+  public WaveDataGeneratorSineAmplitude(int frequency) {
+    this(frequency, frequency / 2);
   }
   
   @Override
-  protected double generateSample(Wave wave, byte bit, long abs, long rel, long left) {
+  public double generateSample(Wave wave, byte bit, long abs, long rel, long left) {
     return simple.generateSample(wave, abs, rel, left) * bit;
   }
 
