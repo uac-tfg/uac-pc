@@ -33,10 +33,14 @@ public abstract class WaveDataGenerator {
     long to = from + length;
     int bitFrequency = getBitFrequency();
 
-    for (long i = from; i < to; i++, samplePointer++) {
+    for (long i = from; i <= to; i++, samplePointer++) {
       if (sampleBuffer == null || samplePointer == sampleBuffer.length) {
         if (sampleBuffer != null) {
           wave.setFrames(i - sampleBuffer.length, sampleBuffer);
+        }
+        
+        if (i == to) {
+          break;
         }
 
         int size = (int) Math.min(Wave.BUFFER_SIZE, to - i);
@@ -51,7 +55,7 @@ public abstract class WaveDataGenerator {
     return wave;
   }
 
-  protected abstract double generateSample(Wave wave, byte b, long abs, long rel, long left);
+  public abstract double generateSample(Wave wave, byte b, long abs, long rel, long left);
   
   public abstract int getBitFrequency();
   
