@@ -81,7 +81,7 @@ public class SignalCoder {
           hop = hopRandom.nextInt(waveDataGenerators.length);
         }
         
-        System.out.println("Bit #" + currentPos + " " + ByteUtil.getBit(data, currentPos) + " on hop " + hop + " from " + i);
+//        System.out.println("Bit #" + currentPos + " " + ByteUtil.getBit(data, currentPos) + " on hop " + hop + " from " + i);
         
         sentBits++;
       }
@@ -115,7 +115,7 @@ public class SignalCoder {
         if(config.getString("modulation").equals("onoff")) {
           int frequency = ((WaveDataGeneratorSineAmplitude) waveDataGenerators[hop][0]).getFrequency();
           double magnitude = wave.getFrequencyMagnitude(frequency, lastFramePos, currentFramePos - lastFramePos);
-          System.out.println(lastFramePos + " to " + currentFramePos + " on " + frequency + " (" + hop + "):" + magnitude);
+//          System.out.println(lastFramePos + " to " + currentFramePos + " on " + frequency + " (" + hop + "):" + magnitude);
           if (magnitude > config.getInt("treshhold")) {
             ByteUtil.setBit(data, currentBitPos - 1, (byte) 1);
           } else {
@@ -126,7 +126,7 @@ public class SignalCoder {
           int frequency = ((WaveDataGeneratorSinePhase) waveDataGenerators[hop][0]).getFrequency();
           double magnitude = wave.getFrequencyMagnitude(frequency, lastFramePos, currentFramePos - lastFramePos);
           double phase = wave.getPhaseShift(frequency, lastFramePos, currentFramePos - lastFramePos);
-          System.out.println(lastFramePos + " to " + currentFramePos + " on " + frequency + " (" + hop + "):" + magnitude);
+//          System.out.println(lastFramePos + " to " + currentFramePos + " on " + frequency + " (" + hop + "):" + magnitude);
           if (magnitude > config.getInt("treshhold")) {
             if(phase > 0.25 && phase < 0.75) {
               ByteUtil.setBit(data, currentBitPos - 1, (byte) 1);
