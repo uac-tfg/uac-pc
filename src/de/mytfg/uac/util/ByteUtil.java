@@ -10,4 +10,13 @@ public class ByteUtil {
     return valBit;
   }
 
+  public static void setBit(byte[] data, long pos, byte val) {
+    int posByte = (int) (pos / 8);
+    int posBit = (int) (pos % 8);
+    byte oldByte = data[posByte];
+    oldByte = (byte) (((0xFF7F >> posBit) & oldByte) & 0x00FF);
+    byte newByte = (byte) ((val << (8 - (posBit + 1))) | oldByte);
+    data[posByte] = newByte;
+  }
+
 }
