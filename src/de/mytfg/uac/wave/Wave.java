@@ -223,7 +223,7 @@ public class Wave {
     double[] buffer = null;
     for (long i = from; i < (from + length); i++, pointer++) {
       if (pointer == BUFFER_SIZE) {
-        int size = (int) Math.min(BUFFER_SIZE, getNumFrames() - i);
+        int size = (int) Math.min(BUFFER_SIZE, from + length - i);
         buffer = getFrames(i, size);
         pointer = 0;
       }
