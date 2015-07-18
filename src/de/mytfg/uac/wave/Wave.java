@@ -187,7 +187,7 @@ public class Wave {
     c = this.initGoertzel(targetFrequency, from, length);
     double r = Math.atan2(c.getIma(), c.getReal()); // r ∈ (-π, +π)
     r += Math.PI; // r ∈ (0, +2π)
-    r =  (r / Math.PI / 2d); // r ∈ (0, +1)
+    r = (r / Math.PI / 2d); // r ∈ (0, +1)
     return 1d - r; // r ∈ (+1, 0)
   }
 
@@ -196,7 +196,7 @@ public class Wave {
     long length = this.getNumFrames();
     return this.getPhaseShift(targetFrequency, from, length);
   }
-  
+
   /**
    * Uses Goertzel Algorithm on the class
    * 
@@ -227,6 +227,9 @@ public class Wave {
       d2 = d1;
       d1 = d0;
     }
+    d0 = a1 * d1 - d2;
+    d2 = d1;
+    d1 = d0;
     ComplexNumber c = new ComplexNumber(d2 * sin, d1 - d2 * cos);
     return c;
   }
