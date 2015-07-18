@@ -38,6 +38,34 @@ public class WaveConfig {
     return new WaveConfig(16, 44100, numFrames);
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + (int) (numFrames ^ (numFrames >>> 32));
+    result = prime * result + sampleRate;
+    result = prime * result + validBits;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    WaveConfig other = (WaveConfig) obj;
+    if (numFrames != other.numFrames)
+      return false;
+    if (sampleRate != other.sampleRate)
+      return false;
+    if (validBits != other.validBits)
+      return false;
+    return true;
+  }
+
   public int getValidBits() {
     return validBits;
   }
