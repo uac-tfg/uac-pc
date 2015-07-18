@@ -28,8 +28,9 @@ public class Wave {
    */
   public Wave(File file, WaveConfig config) {
     try {
-      this.wav = RandomAccessWavFile.newWavFile(file, 1, config.getNumFrames(),
-          config.getValidBits(), config.getSampleRate());
+      this.wav =
+          RandomAccessWavFile.newWavFile(file, 1, config.getNumFrames(), config.getValidBits(),
+              config.getSampleRate());
       clear(); // allocate file
     } catch (IOException | WavFileException e) {
       throw new RuntimeException(e);
@@ -119,7 +120,7 @@ public class Wave {
         if (fromBuffer != null && toBuffer != null) {
           setFrames(i + toStart - toBuffer.length, toBuffer);
         }
-        
+
         if (i == length) {
           break;
         }
@@ -211,8 +212,8 @@ public class Wave {
     if (from + length > this.getNumFrames() || from < 0 || length <= 0) {
       throw new IndexOutOfBoundsException("from + length is out of range!");
     }
-    double omega = (2.0 * Math.PI
-        * ((int) (0.5 + ((length * targetFrequency) / this.getSampleRate()))) / length);
+    double omega =
+        (2.0 * Math.PI * ((int) (0.5 + ((length * targetFrequency) / this.getSampleRate()))) / length);
     double sin = Math.sin(omega);
     double cos = Math.cos(omega);
     double a1 = 2.0 * cos;
@@ -236,6 +237,27 @@ public class Wave {
     d1 = d0;
     ComplexNumber c = new ComplexNumber(d2 * sin, d1 - d2 * cos);
     return c;
+  }
+
+  public void scale(double factor) {
+    double[] buffer = null;
+    int pointer = BUFFER_SIZE;
+    for (long i = 0; i <= getNumFrames(); i++, pointer++) {
+      if (buffer == null || pointer >= buffer.length) {
+        if (buffer != null) {
+          setFrames(i - buffer.length, buffer);
+        }
+
+        if (i == getNumFrames()) {
+          break;
+        }
+
+        int size = (int) Math.min(BUFFER_SIZE, getNumFrames() - i);
+        buffer = this.getFrames(i, size);
+        pointer = 0;
+      }
+      buffer[pointer] = buffer[pointer] * factor;
+    }
   }
 
   /**

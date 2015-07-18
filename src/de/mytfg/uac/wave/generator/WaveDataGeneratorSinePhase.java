@@ -33,5 +33,9 @@ public class WaveDataGeneratorSinePhase extends WaveDataGenerator {
   public int getBitFrequency() {
     return bitFrequency;
   }
+  
+  public int getFrequency() {
+    return sineA.getFrequency();
+  }
 
 }

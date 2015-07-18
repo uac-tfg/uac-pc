@@ -25,5 +25,9 @@ public class WaveDataGeneratorSineAmplitude extends WaveDataGenerator {
   public int getBitFrequency() {
     return bitFrequency;
   }
+  
+  public int getFrequency() {
+    return simple.getFrequency();
+  }
 
 }

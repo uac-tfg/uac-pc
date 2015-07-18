@@ -37,4 +37,8 @@ public class WaveGeneratorSine extends WaveGenerator {
     return val;
   }
 
+  public int getFrequency() {
+    return frequency;
+  }
+
 }
