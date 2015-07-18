@@ -19,6 +19,7 @@ public class Wave {
   public static final int BUFFER_SIZE = 1024;
 
   private RandomAccessWavFile wav;
+  private WaveConfig config;
 
   /**
    * Creates a new wave object.
@@ -27,6 +28,7 @@ public class Wave {
    * @param config the config to use
    */
   public Wave(File file, WaveConfig config) {
+    this.config = config;
     try {
       this.wav =
           RandomAccessWavFile.newWavFile(file, 1, config.getNumFrames(), config.getValidBits(),
@@ -318,6 +320,10 @@ public class Wave {
 
   public File getFile() {
     return wav.getFile();
+  }
+
+  public WaveConfig getConfig() {
+    return config;
   }
 
 }

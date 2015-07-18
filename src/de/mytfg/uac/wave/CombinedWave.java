@@ -45,6 +45,17 @@ public class CombinedWave {
     waves.add(wave);
     return wave;
   }
+  
+  /**
+   * Add an existing wave
+   * @param w
+   */
+  public void addWave(Wave w) {
+    if(!config.equals(w.getConfig())) {
+      throw new IllegalArgumentException("Configs are not equal!");
+    }
+    waves.add(w);
+  }
 
   /**
    * Removes a wave by index.

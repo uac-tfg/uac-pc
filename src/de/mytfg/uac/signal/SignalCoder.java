@@ -1,12 +1,10 @@
 package de.mytfg.uac.signal;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileAttribute;
 import java.util.Random;
 
 import de.mytfg.uac.util.ByteUtil;
-import de.mytfg.uac.wave.CombinedWave;
 import de.mytfg.uac.wave.Wave;
 import de.mytfg.uac.wave.WaveConfig;
 import de.mytfg.uac.wave.generator.WaveDataGenerator;
@@ -47,15 +45,12 @@ public class SignalCoder {
     hopRandomSeed = config.getLong("fhss.seed");
   }
 
-  public CombinedWave encode(byte[] data) throws IOException {
+  public Wave encode(byte[] data) throws IOException {
     int samplingRate = config.getInt("samplingrate");
     long numFrames =
         (long) ((samplingRate / (double) waveDataGenerators[0][0].getBitFrequency()) * (data.length * 8)) + 1;
     WaveConfig waveConfig = new WaveConfig(16, samplingRate, numFrames);
-    CombinedWave wave =
-        new CombinedWave(Files.createTempDirectory("signal", new FileAttribute<?>[] {}).toFile(),
-            waveConfig);
-    Wave w = wave.newWave();
+    Wave w = new Wave(File.createTempFile("signal", ".wav"), waveConfig);
 
     Random hopRandom = new Random(hopRandomSeed);
     int hop = 0;
@@ -86,7 +81,7 @@ public class SignalCoder {
           hop = hopRandom.nextInt(waveDataGenerators.length);
         }
         
-        System.out.println("Bit #" + currentPos + " " + ByteUtil.getBit(data, currentPos) + " on hop " + hop + " from " + i);
+//        System.out.println("Bit #" + currentPos + " " + ByteUtil.getBit(data, currentPos) + " on hop " + hop + " from " + i);
         
         sentBits++;
       }
@@ -95,7 +90,7 @@ public class SignalCoder {
       buffer[pointer] = val;
     }
 
-    return wave;
+    return w;
   }
 
   public byte[] decode(Wave wave, int bytes) {
@@ -120,7 +115,7 @@ public class SignalCoder {
         if(config.getString("modulation").equals("onoff")) {
           int frequency = ((WaveDataGeneratorSineAmplitude) waveDataGenerators[hop][0]).getFrequency();
           double magnitude = wave.getFrequencyMagnitude(frequency, lastFramePos, currentFramePos - lastFramePos);
-          System.out.println(lastFramePos + " to " + currentFramePos + " on " + frequency + " (" + hop + "):" + magnitude);
+//          System.out.println(lastFramePos + " to " + currentFramePos + " on " + frequency + " (" + hop + "):" + magnitude);
           if (magnitude > config.getInt("treshhold")) {
             ByteUtil.setBit(data, currentBitPos - 1, (byte) 1);
           } else {
@@ -131,7 +126,7 @@ public class SignalCoder {
           int frequency = ((WaveDataGeneratorSinePhase) waveDataGenerators[hop][0]).getFrequency();
           double magnitude = wave.getFrequencyMagnitude(frequency, lastFramePos, currentFramePos - lastFramePos);
           double phase = wave.getPhaseShift(frequency, lastFramePos, currentFramePos - lastFramePos);
-          System.out.println(lastFramePos + " to " + currentFramePos + " on " + frequency + " (" + hop + "):" + magnitude);
+//          System.out.println(lastFramePos + " to " + currentFramePos + " on " + frequency + " (" + hop + "):" + magnitude);
           if (magnitude > config.getInt("treshhold")) {
             if(phase > 0.25 && phase < 0.75) {
               ByteUtil.setBit(data, currentBitPos - 1, (byte) 1);
