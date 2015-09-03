@@ -18,5 +18,13 @@ public class ByteUtil {
     byte newByte = (byte) ((val << (8 - (posBit + 1))) | oldByte);
     data[posByte] = newByte;
   }
+  
+  public static String toBitString(byte[] data) {
+    StringBuilder sb = new StringBuilder();
+    for(int i = 0; i < data.length * 8; i++) {
+      sb.append(getBit(data, i));
+    }
+    return sb.toString();
+  }
 
 }
