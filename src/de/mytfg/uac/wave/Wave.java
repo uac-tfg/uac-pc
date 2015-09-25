@@ -214,8 +214,9 @@ public class Wave {
     if (from + length > this.getNumFrames() || from < 0 || length <= 0) {
       throw new IndexOutOfBoundsException("from + length is out of range!");
     }
+    double k = (((double) length * (double) targetFrequency) / (double) this.getSampleRate());
     double omega =
-        (2.0 * Math.PI * ((int) (0.5 + ((length * targetFrequency) / this.getSampleRate()))) / length);
+        (2d * Math.PI * k) / (double) length;
     double sin = Math.sin(omega);
     double cos = Math.cos(omega);
     double a1 = 2.0 * cos;
@@ -237,7 +238,7 @@ public class Wave {
     d0 = a1 * d1 - d2;
     d2 = d1;
     d1 = d0;
-    ComplexNumber c = new ComplexNumber(d2 * sin, d1 - d2 * cos);
+    ComplexNumber c = new ComplexNumber(d1 - d2 * cos, d2 * sin);
     return c;
   }
 
