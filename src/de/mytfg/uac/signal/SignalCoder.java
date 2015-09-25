@@ -140,7 +140,18 @@ public class SignalCoder {
         // ByteUtil.setBit(data, currentBitPos - 1, (byte) 0);
         // }
         // }
-      } // TODO
+      } else if(config.get("modulation").equals("phase")) {
+        int frequency =
+            ((WaveDataGeneratorSinePhase) waveDataGenerators[hop][0]).getFrequency();
+        double phase = wave.getPhaseShift(frequency, fromFrame, lengthFrames);
+        System.out.println("Bit #" + currentBitPos + " " + fromFrame + " for " + lengthFrames
+            + " frames on " + frequency + " (" + hop + "):" + phase);
+        if (phase > 0.25 && phase < 0.75) {
+          ByteUtil.setBit(data, currentBitPos, (byte) 1);
+        } else {
+          ByteUtil.setBit(data, currentBitPos, (byte) 0);
+        }
+      }
     }
     return data;
   }
