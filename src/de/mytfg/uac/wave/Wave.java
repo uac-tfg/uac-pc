@@ -192,10 +192,13 @@ public class Wave {
   public double getPhaseShift(int targetFrequency, long from, long length) {
     ComplexNumber c = new ComplexNumber();
     c = this.initGoertzel(targetFrequency, from, length);
-    double r = Math.atan2(c.getIma(), c.getReal()); // r ∈ (-π, +π)
-    r += Math.PI; // r ∈ (0, +2π)
-    r = (r / Math.PI / 2d); // r ∈ (0, +1)
-    return 1d - r; // r ∈ (+1, 0)
+    double theta = Math.atan2(c.getIma(), c.getReal()); // r ∈ (-π, +π)
+//    double r = Math.atan(c.getReal() / c.getIma()); // r ∈ (-0.5π, +0.5π)
+//    double r = c.getTheta(); // r ∈ (-π, +π)
+//    System.out.println("Real: " + c.getReal() + "  Ima: " + c.getIma() + " r: " + theta);
+//    r += Math.PI; // r ∈ (0, +2π)
+    theta = (theta / Math.PI / 2d); // r ∈ (0, +1)
+    return 1.0 - (theta + 0.5); // r ∈ (+1, 0)
   }
 
   public double getPhaseShift(int targetFrequency) {

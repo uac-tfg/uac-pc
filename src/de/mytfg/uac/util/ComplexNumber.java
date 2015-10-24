@@ -99,6 +99,10 @@ public class ComplexNumber {
       c = c.cMul(this);
     return c;
   }
+  
+  public double getTheta() {
+    return Math.atan2(ima, real);
+  }
 
   public double getReal() {
     return real;
