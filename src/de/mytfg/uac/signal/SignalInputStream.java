@@ -2,97 +2,71 @@ package de.mytfg.uac.signal;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Random;
 
 import de.mytfg.uac.util.ByteUtil;
-import de.mytfg.uac.wave.Wave;
-import de.mytfg.uac.wave.generator.WaveDataGenerator;
-import de.mytfg.uac.wave.generator.WaveDataGeneratorSineAmplitude;
-import de.mytfg.uac.wave.generator.WaveDataGeneratorSinePhase;
+import de.mytfg.uac.util.ComplexNumber;
+import de.mytfg.uac.wave.stream.InputWave;
 
 public class SignalInputStream extends InputStream {
-
+  
+  private InputWave in;
   private SignalConfig config;
-
-  private WaveDataGenerator[][] waveDataGenerators;
+  
   private long hopRandomSeed;
   private int samplesPerBit;
+  private int samplingrate;
 
-  public SignalInputStream(SignalConfig config) {
+  public SignalInputStream(InputWave in, SignalConfig config) {
+    this.in = in;
     this.config = config;
-    samplesPerBit = config.getInt("samplingrate") / getBitFrequency();
+    samplingrate = config.getInt("samplingrate");
+    samplesPerBit = samplingrate / getBitFrequency();
     hopRandomSeed = config.getLong("fhss.seed");
   }
 
   @Override
   public int read() throws IOException {
-    
-    return 0;
-  }
-
-  public byte[] decode(Wave wave, int bytes, long start) {
-    byte[] data = new byte[bytes];
-    int samplingRate = config.getInt("samplingrate");
-    long numFrames =
-        (long) ((samplingRate / (double) waveDataGenerators[0][0].getBitFrequency()) * (data.length * 8));
-    int hop = 0;
-    Random hopRandom = new Random(hopRandomSeed);
-    for (int currentBitPos = 0; currentBitPos < bytes * 8; currentBitPos++) {
-
-      if (currentBitPos % config.getInt("fhss.bitsperhop") == 0) {
-        hop = hopRandom.nextInt(waveDataGenerators.length);
-      }
-
-      long fromFrame = start + (long) (((double) samplingRate / getBitFrequency()) * currentBitPos);
-      long lengthFrames =
-          Math.min(numFrames - fromFrame, (long) ((double) samplingRate / getBitFrequency()) + 1);
-
-      if (config.getString("modulation").equals("onoff")) {
-        int frequency =
-            ((WaveDataGeneratorSineAmplitude) waveDataGenerators[hop][0]).getFrequency();
-        double magnitude = wave.getFrequencyMagnitude(frequency, fromFrame, lengthFrames);
-        System.out.println("Bit #" + (currentBitPos - 1) + " " + fromFrame + " for " + lengthFrames
-            + " frames on " + frequency + " (" + hop + "):" + magnitude);
-        if (magnitude > config.getDouble("treshhold")) {
-          ByteUtil.setBit(data, currentBitPos, (byte) 1);
-        } else {
-          ByteUtil.setBit(data, currentBitPos, (byte) 0);
-        }
-        // } else if (config.getString("modulation").equals("phase")) {
-        // // TODO
-        // int frequency = ((WaveDataGeneratorSinePhase) waveDataGenerators[hop][0]).getFrequency();
-        // double magnitude =
-        // wave.getFrequencyMagnitude(frequency, lastFramePos, currentFramePos - lastFramePos);
-        // double phase = wave.getPhaseShift(frequency, lastFramePos, currentFramePos -
-        // lastFramePos);
-        // // System.out.println(lastFramePos + " to " + currentFramePos + " on " + frequency + " ("
-        // +
-        // // hop + "):" + magnitude);
-        // if (magnitude > config.getInt("treshhold")) {
-        // if (phase > 0.25 && phase < 0.75) {
-        // ByteUtil.setBit(data, currentBitPos - 1, (byte) 1);
-        // } else {
-        // ByteUtil.setBit(data, currentBitPos - 1, (byte) 0);
-        // }
-        // }
-      } else if(config.get("modulation").equals("phase")) {
-        int frequency =
-            ((WaveDataGeneratorSinePhase) waveDataGenerators[hop][0]).getFrequency();
-        double phase = wave.getPhaseShift(frequency, fromFrame, lengthFrames);
-        System.out.println("Bit #" + currentBitPos + " " + fromFrame + " for " + lengthFrames
-            + " frames on " + frequency + " (" + hop + "):" + phase);
-        if (phase > 0.25 && phase < 0.75) {
-          ByteUtil.setBit(data, currentBitPos, (byte) 1);
-        } else {
-          ByteUtil.setBit(data, currentBitPos, (byte) 0);
-        }
+    byte data = 0;
+    double treshhold = config.getDouble("treshhold");
+    for(int i = 0; i < 8; i++) {
+      double magnitude = getFrequencyMagnitude(config.getInt("mainfrequency"), samplesPerBit);
+      if (magnitude > treshhold) {
+        data = ByteUtil.setBit(data, i, (byte) 1);
       }
     }
     return data;
   }
+  
+  private double getFrequencyMagnitude(int targetFrequency, int length) throws IOException {
+    ComplexNumber c = goertzel(targetFrequency, length);
+    return (c.getReal() * c.getReal() + c.getIma() * c.getIma());
+  }
+  
+  private ComplexNumber goertzel(int targetFrequency, int length) throws IOException {
+    double k = (((double) length * (double) targetFrequency) / (double) samplingrate);
+    double omega =
+        (2d * Math.PI * k) / (double) length;
+    double sin = Math.sin(omega);
+    double cos = Math.cos(omega);
+    double a1 = 2.0 * cos;
+    double d1 = 0;
+    double d2 = 0;
+    double d0;
+    for (int i = 0; i < length; i++) {
+      double sample = in.readSample();
+      d0 = a1 * d1 - d2 + sample;
+      d2 = d1;
+      d1 = d0;
+    }
+    d0 = a1 * d1 - d2;
+    d2 = d1;
+    d1 = d0;
+    ComplexNumber c = new ComplexNumber(d1 - d2 * cos, d2 * sin);
+    return c;
+  }
 
   public int getBitFrequency() {
-    return waveDataGenerators[0][0].getBitFrequency();
+    return config.getInt("mainfrequency") / config.getInt("periodsperbit");
   }
 
 }
