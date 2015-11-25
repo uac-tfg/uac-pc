@@ -1,7 +1,6 @@
 package de.mytfg.uac.wave.stream;
 
 import java.io.EOFException;
-import java.io.File;
 import java.io.IOException;
 
 import javax.sound.sampled.AudioFormat;
@@ -9,7 +8,6 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 import de.mytfg.uac.util.SimpleAudioConversion;
 
@@ -20,7 +18,6 @@ public class InputWaveRecorder extends InputWave {
   private AudioInputStream in;
   private byte[] buffer;
   private float[] samples;
-  private AudioFormat format;
 
   public InputWaveRecorder(int samplingRate) {
     AudioFormat format = new AudioFormat(samplingRate, BYTES * 8, 1, true, false);
