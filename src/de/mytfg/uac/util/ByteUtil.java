@@ -44,5 +44,17 @@ public class ByteUtil {
     }
     return sb.toString();
   }
+  
+  public static byte[] toByteArray(String bits) {
+    int byteLength = bits.length() / 8;
+    if(bits.length() % 8 != 0) {
+      byteLength += 1;
+    }
+    byte[] bytes = new byte[byteLength];
+    for(int i = 0; i < bits.length(); i++) {
+      setBit(bytes, i, (byte) (bits.charAt(i) == '1' ? 1 : 0));
+    }
+    return bytes;
+  }
 
 }

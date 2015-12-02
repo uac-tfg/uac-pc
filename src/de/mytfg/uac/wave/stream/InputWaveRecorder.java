@@ -13,22 +13,23 @@ import de.mytfg.uac.util.SimpleAudioConversion;
 
 public class InputWaveRecorder extends InputWave {
 
-  private static final int BYTES = 3;
+  private static final int BYTES = 2;
 
-  private AudioInputStream in;
+  private TargetDataLine line;
   private byte[] buffer;
   private float[] samples;
 
   public InputWaveRecorder(int samplingRate) {
     AudioFormat format = new AudioFormat(samplingRate, BYTES * 8, 1, true, false);
     try {
-      TargetDataLine line = AudioSystem.getTargetDataLine(format);
-      in = new AudioInputStream(line);
+      line = AudioSystem.getTargetDataLine(format);
+      line.open();
+      line.start();
 //      in = AudioSystem.getAudioInputStream(new File("c.wav"));
     } catch (LineUnavailableException e) {
       throw new RuntimeException("Unable to open line for recording!", e);
     }
-    format = in.getFormat();
+    format = line.getFormat();
     buffer = new byte[format.getSampleSizeInBits() / 8];
     samples = new float[1];
   }
@@ -37,9 +38,9 @@ public class InputWaveRecorder extends InputWave {
   public double readSample() throws IOException {
     int blen = 0;
     while(blen != buffer.length) {
-      blen = in.read(buffer);
+      blen = line.read(buffer, 0, buffer.length);
     }
-    int slen = SimpleAudioConversion.unpack(buffer, samples, blen, in.getFormat());
+    int slen = SimpleAudioConversion.unpack(buffer, samples, blen, line.getFormat());
     if(slen != 1) {
       throw new EOFException();
     }
@@ -47,7 +48,7 @@ public class InputWaveRecorder extends InputWave {
   }
 
   public void close() throws IOException {
-    in.close();
+    line.close();
   }
 
 }

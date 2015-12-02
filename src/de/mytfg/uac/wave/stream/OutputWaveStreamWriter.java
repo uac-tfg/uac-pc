@@ -16,5 +16,9 @@ public class OutputWaveStreamWriter extends OutputWave {
   public void writeSample(double sample) throws IOException {
     out.write(ByteUtil.toByteArray(sample));
   }
+  
+  public void close() throws IOException {
+    out.close();
+  }
 
 }
