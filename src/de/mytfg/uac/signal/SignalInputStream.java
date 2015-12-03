@@ -37,6 +37,24 @@ public class SignalInputStream extends InputStream {
     return data;
   }
   
+  public void waitFor(byte b) throws IOException {
+    int pos = 0;
+    double treshhold = config.getDouble("treshhold");
+    while(true) {
+      double magnitude = getFrequencyMagnitude(config.getInt("mainfrequency"), samplesPerBit);
+      if(magnitude > treshhold && ByteUtil.getBit(b, pos) == 1) {
+        pos++;
+      } else if(magnitude < treshhold && ByteUtil.getBit(b, pos) == 0) {
+        pos++;
+      } else {
+        pos = 0;
+      }
+      if(pos == 8) {
+        break;
+      }
+    }
+  }
+  
   private double getFrequencyMagnitude(int targetFrequency, int length) throws IOException {
     ComplexNumber c = goertzel(targetFrequency, length);
     return (c.getReal() * c.getReal() + c.getIma() * c.getIma());
