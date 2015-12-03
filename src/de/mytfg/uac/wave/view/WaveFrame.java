@@ -1,14 +1,12 @@
 package de.mytfg.uac.wave.view;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import de.mytfg.uac.wave.CombinedWave;
-import java.awt.Dimension;
+import de.mytfg.uac.wave.stream.InputWave;
 
 public class WaveFrame extends JFrame {
 
@@ -17,7 +15,7 @@ public class WaveFrame extends JFrame {
   /**
    * Create the frame.
    */
-  public WaveFrame(CombinedWave wave) {
+  public WaveFrame(InputWave[] wave) {
     setTitle("Wave Viewer");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setBounds(100, 100, 1248, 400);

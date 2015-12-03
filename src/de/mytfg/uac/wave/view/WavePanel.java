@@ -10,7 +10,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
@@ -19,15 +18,13 @@ import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
-import de.mytfg.uac.wave.CombinedWave;
-import de.mytfg.uac.wave.Wave;
+import de.mytfg.uac.wave.stream.InputWave;
 import de.mytfg.uac.wave.view.WaveVisualizerPanel.LabelMethod;
 
 public class WavePanel extends JPanel implements ChangeListener, ActionListener, ComponentListener {
@@ -37,7 +34,7 @@ public class WavePanel extends JPanel implements ChangeListener, ActionListener,
    */
   private static final long serialVersionUID = 7700452874892977640L;
 
-  private CombinedWave wave;
+  private InputWave[] wave;
 
   private JComboBox comboBoxUnit;
   private JSpinner spinnerEvery;
@@ -49,7 +46,7 @@ public class WavePanel extends JPanel implements ChangeListener, ActionListener,
   /**
    * Create the panel.
    */
-  public WavePanel(CombinedWave wave) {
+  public WavePanel(InputWave[] wave) {
     this.wave = wave;
 
     addComponentListener(this);
@@ -143,9 +140,8 @@ public class WavePanel extends JPanel implements ChangeListener, ActionListener,
     settingsPanel.add(panelWaves);
 
     CheckBoxList wavesList = new CheckBoxList();
-    ArrayList<Wave> waves = wave.getWaves();
-    JCheckBox[] checkBoxes = new JCheckBox[waves.size() + 1];
-    for (int i = 0; i < waves.size(); i++) {
+    JCheckBox[] checkBoxes = new JCheckBox[wave.length + 1];
+    for (int i = 0; i < wave.length; i++) {
       JCheckBox box = new JCheckBox();
       box.setText(String.valueOf(i));
       checkBoxes[i] = box;
