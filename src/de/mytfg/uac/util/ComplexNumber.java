@@ -33,12 +33,12 @@ public class ComplexNumber {
 
   public ComplexNumber(boolean unwichtig, double ima) {
     this.ima = ima;
-    this.real = 1;
+    this.real = 0;
   }
 
   public ComplexNumber(double real, boolean unwichtig) {
     this.real = real;
-    this.real = 1;
+    this.ima = 0;
   }
 
   /*
@@ -98,6 +98,10 @@ public class ComplexNumber {
     for (int i = 1; i < exponent; i++)
       c = c.cMul(this);
     return c;
+  }
+  
+  public double getTheta() {
+    return Math.atan2(ima, real);
   }
 
   public double getReal() {

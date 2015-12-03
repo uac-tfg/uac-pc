@@ -192,10 +192,13 @@ public class Wave {
   public double getPhaseShift(int targetFrequency, long from, long length) {
     ComplexNumber c = new ComplexNumber();
     c = this.initGoertzel(targetFrequency, from, length);
-    double r = Math.atan2(c.getIma(), c.getReal()); // r ∈ (-π, +π)
-    r += Math.PI; // r ∈ (0, +2π)
-    r = (r / Math.PI / 2d); // r ∈ (0, +1)
-    return 1d - r; // r ∈ (+1, 0)
+    double theta = Math.atan2(c.getIma(), c.getReal()); // r ∈ (-π, +π)
+//    double r = Math.atan(c.getReal() / c.getIma()); // r ∈ (-0.5π, +0.5π)
+//    double r = c.getTheta(); // r ∈ (-π, +π)
+//    System.out.println("Real: " + c.getReal() + "  Ima: " + c.getIma() + " r: " + theta);
+//    r += Math.PI; // r ∈ (0, +2π)
+    theta = (theta / Math.PI / 2d); // r ∈ (0, +1)
+    return 1.0 - (theta + 0.5); // r ∈ (+1, 0)
   }
 
   public double getPhaseShift(int targetFrequency) {
@@ -214,8 +217,9 @@ public class Wave {
     if (from + length > this.getNumFrames() || from < 0 || length <= 0) {
       throw new IndexOutOfBoundsException("from + length is out of range!");
     }
+    double k = (((double) length * (double) targetFrequency) / (double) this.getSampleRate());
     double omega =
-        (2.0 * Math.PI * ((int) (0.5 + ((length * targetFrequency) / this.getSampleRate()))) / length);
+        (2d * Math.PI * k) / (double) length;
     double sin = Math.sin(omega);
     double cos = Math.cos(omega);
     double a1 = 2.0 * cos;
@@ -237,7 +241,7 @@ public class Wave {
     d0 = a1 * d1 - d2;
     d2 = d1;
     d1 = d0;
-    ComplexNumber c = new ComplexNumber(d2 * sin, d1 - d2 * cos);
+    ComplexNumber c = new ComplexNumber(d1 - d2 * cos, d2 * sin);
     return c;
   }
 
