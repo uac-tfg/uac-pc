@@ -1,12 +1,12 @@
 package de.mytfg.uac.wave.view;
 
 import java.awt.Graphics;
-import java.util.ArrayList;
+import java.io.IOException;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import de.mytfg.uac.wave.CombinedWave;
-import de.mytfg.uac.wave.Wave;
+import de.mytfg.uac.wave.stream.InputWave;
 
 public class WaveVisualizerPanel extends JPanel {
 
@@ -15,7 +15,7 @@ public class WaveVisualizerPanel extends JPanel {
    */
   private static final long serialVersionUID = 7700452874892977640L;
 
-  private CombinedWave wave;
+  private InputWave[] wave;
 
   private boolean[] drawWave;
   
@@ -48,9 +48,9 @@ public class WaveVisualizerPanel extends JPanel {
     }
   }
 
-  public WaveVisualizerPanel(CombinedWave wave) {
+  public WaveVisualizerPanel(InputWave[] wave) {
     this.wave = wave;
-    this.drawWave = new boolean[wave.getWaves().size() + 1];
+    this.drawWave = new boolean[wave.length + 1];
     for(int i = 0; i < drawWave.length; i++) {
       drawWave[i] = true;
     }
@@ -69,17 +69,11 @@ public class WaveVisualizerPanel extends JPanel {
     drawAxis(g);
 
     g.translate(0, (int) scale);
-    ArrayList<Wave> waves = wave.getWaves();
-    for (int i = 0; i <= waves.size(); i++) {
+    for (int i = 0; i < wave.length; i++) {
       if(!drawWave[i]) {
         continue;
       }
-      Wave w;
-      if(i == waves.size()) {
-        w = wave.combine();
-      } else {
-        w = waves.get(i);
-      }
+      InputWave w = wave[i];
       drawWave(g, w);
     }
   }
@@ -97,20 +91,28 @@ public class WaveVisualizerPanel extends JPanel {
     }
   }
 
-  private void drawWave(Graphics g, Wave wave) {
-    double[] data = wave.getFrames(from, length);
-    double last = data[0];
-    int lastY = (int) (last * scale * -1);
-    int lastX = 0;
-    for (int i = 1; i < data.length; i++) {
-      double next = data[i];
-      int nextY = (int) (last * scale * -1);
-      int nextX = (int) (i * distance);
-      g.drawLine(lastX, lastY, nextX, nextY);
-      last = next;
-      lastY = nextY;
-      lastX = nextX;
+  private void drawWave(Graphics g, InputWave wave) {
+    try {
+      for(long i = 0; i < from; i++) {
+        wave.readSample();
+      }
+      double last = wave.readSample();
+      int lastY = (int) (last * scale * -1);
+      int lastX = 0;
+      for (int i = 1; i < length; i++) {
+        double next = wave.readSample();
+        int nextY = (int) (last * scale * -1);
+        int nextX = (int) (i * distance);
+        g.drawLine(lastX, lastY, nextX, nextY);
+        last = next;
+        lastY = nextY;
+        lastX = nextX;
+      }
+    } catch(IOException e) {
+      JOptionPane.showMessageDialog(this, "Wave could not be read! Exception:\n" + e.getMessage(),
+          "Could not read wave!", JOptionPane.ERROR_MESSAGE);
     }
+    
   }
 
   public void setLabeling(LabelMethod method, int every) {
@@ -119,11 +121,6 @@ public class WaveVisualizerPanel extends JPanel {
       factor = every;
     } else if (method == LabelMethod.TIME) {
       // TODO: correct
-      double time =
-          (wave.getConfig().getNumFrames() / (double) wave.getConfig().getSampleRate()) * 100000;
-      double labels = getLength() / getLabelEvery();
-      double timePerLabel = time / labels;
-      factor = (int) timePerLabel;
     }
     setLabelEvery(every);
     setLabelFactor(factor);
@@ -200,7 +197,7 @@ public class WaveVisualizerPanel extends JPanel {
     this.labelMarkerLength = labelMarkerLength;
   }
 
-  public CombinedWave getWave() {
+  public InputWave[] getWave() {
     return wave;
   }
   
