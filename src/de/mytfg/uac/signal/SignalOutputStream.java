@@ -58,58 +58,6 @@ public class SignalOutputStream extends OutputStream {
     }
   }
 
-//  public Wave encode(byte[] data) throws IOException {
-//    int samplingRate = config.getInt("samplingrate");
-//    long numFrames =
-//        (long) ((samplingRate / (double) waveDataGenerators[0][0].getBitFrequency()) * (data.length * 8));
-//    WaveConfig waveConfig = new WaveConfig(16, samplingRate, numFrames);
-//    Wave w = new Wave(File.createTempFile("signal", ".wav"), waveConfig);
-//
-//    Random hopRandom = new Random(hopRandomSeed);
-//    int hop = 0;
-//    int sentBits = 0;
-//    long lastPos = -1;
-//    double[] buffer = null;
-//    int pointer = 0;
-//    long lastPosFrame = 0;
-//    for (long i = 0; i <= numFrames; i++, pointer++) {
-//      if (buffer == null || pointer == buffer.length) {
-//        if (buffer != null) {
-//          w.setFrames(i - buffer.length, buffer);
-//        }
-//        if (i == numFrames) {
-//          break;
-//        }
-//
-//        int length = (int) Math.min(w.getNumFrames() - i, Wave.BUFFER_SIZE);
-//        buffer = new double[length];
-//        pointer = 0;
-//      }
-//
-//      double currentPosDouble = (i / (double) samplingRate) * getBitFrequency();
-//      long currentPos = (long) (currentPosDouble);
-//      if (currentPos > lastPos) {
-//        lastPos = currentPos;
-//        lastPosFrame = i;
-//
-//        if (sentBits % config.getInt("fhss.bitsperhop") == 0) {
-//          hop = hopRandom.nextInt(waveDataGenerators.length);
-//        }
-//
-//        System.out.println("Bit #" + currentPos + " " + ByteUtil.getBit(data, currentPos)
-//            + " on hop " + hop + " from " + i);
-//
-//        sentBits++;
-//      }
-//      byte b = ByteUtil.getBit(data, currentPos);
-//      long relBitPos = i - lastPosFrame;
-//      double val = waveDataGenerators[hop][0].generateSample(w, b, relBitPos, relBitPos, numFrames - i);
-//      buffer[pointer] = val;
-//    }
-//
-//    return w;
-//  }
-
   public int getBitFrequency() {
     return config.getInt("mainfrequency") / config.getInt("periodsperbit");
   }
