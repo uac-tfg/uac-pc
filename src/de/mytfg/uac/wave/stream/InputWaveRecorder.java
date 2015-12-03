@@ -24,7 +24,6 @@ public class InputWaveRecorder extends InputWave {
     try {
       line = AudioSystem.getTargetDataLine(format);
       line.open();
-      line.start();
 //      in = AudioSystem.getAudioInputStream(new File("c.wav"));
     } catch (LineUnavailableException e) {
       throw new RuntimeException("Unable to open line for recording!", e);
@@ -36,6 +35,10 @@ public class InputWaveRecorder extends InputWave {
 
   @Override
   public double readSample() throws IOException {
+    if(!line.isActive()) {
+      line.start();
+    }
+    
     int blen = 0;
     while(blen != buffer.length) {
       blen = line.read(buffer, 0, buffer.length);
