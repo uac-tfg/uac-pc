@@ -9,12 +9,14 @@ public class Goertzel {
 
   private InputWave in;
   private ComplexNumber complex;
+  private int samplingrate;
 
-  public Goertzel(InputWave in, int frequency) {
+  public Goertzel(InputWave in, int samplingrate) {
     this.in = in;
+    this.samplingrate = samplingrate;
   }
 
-  public void doBlock(int length, int targetFrequency, int samplingrate) throws IOException {
+  public void doBlock(int length, int targetFrequency) throws IOException {
     double k = (((double) length * (double) targetFrequency) / (double) samplingrate);
     double omega = (2d * Math.PI * k) / (double) length;
     double sin = Math.sin(omega);
