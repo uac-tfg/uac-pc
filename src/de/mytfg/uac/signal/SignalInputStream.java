@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.mytfg.uac.util.ByteUtil;
-import de.mytfg.uac.util.ComplexNumber;
 import de.mytfg.uac.wave.stream.Goertzel;
 import de.mytfg.uac.wave.stream.InputWave;
+import de.mytfg.uac.wave.stream.InputWaveDouble;
 
 public class SignalInputStream extends InputStream {
   
@@ -42,6 +42,39 @@ public class SignalInputStream extends InputStream {
       }
     }
     return data;
+  }
+  
+  public void synchronize() throws IOException {
+//    System.out.println(samplesPerBit);
+    double[] samples = new double[samplesPerBit * 2];
+    int maxOffset = -1;
+    double maxMagnitude = 0;
+    int targetFrequency = config.getInt("mainfrequency");
+    double treshhold = config.getDouble("treshhold");
+    
+    while(maxOffset == -1) {
+      in.readSample(samples);
+      InputWaveDouble inBuffer = new InputWaveDouble(samples);
+      for(int i = 0; i < samplesPerBit; i++) {
+        inBuffer.skip(i);
+        Goertzel g = new Goertzel(inBuffer, samplingrate);
+        g.doBlock(samplesPerBit, targetFrequency);
+        double mag = g.getMagnitude();
+        if(mag > treshhold && mag > maxMagnitude) {
+          maxOffset = i;
+          maxMagnitude = mag;
+        }
+        inBuffer.reset();
+      }
+    }
+    int skip = samplesPerBit - maxOffset + samplesPerBit;
+    System.out.println("Skipping frames for snychronizing: " + skip);
+    in.skip(maxOffset);
+    for(int i = 0; i < 6; i++) {
+      boolean symbol = readSymbol(targetFrequency);
+//      System.out.print(symbol ? 1 : 0);
+    }
+//    System.out.println();
   }
   
   public void waitFor(byte b) throws IOException {

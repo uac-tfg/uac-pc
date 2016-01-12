@@ -41,7 +41,7 @@ public class SignalOutputStream extends OutputStream {
   public void write(int ib) throws IOException {
     byte b = (byte) ib;
     int frequency = config.getInt("mainfrequency");
-    int samplerate = config.getInt("samplingrate");
+    int samplingrate = config.getInt("samplingrate");
     for(int i = 0; i < 8; i++) {
       byte bit = ByteUtil.getBit(b, i);
       if(bit == 1) {
@@ -56,6 +56,10 @@ public class SignalOutputStream extends OutputStream {
         }
       }
     }
+  }
+  
+  public void synchronize() throws IOException {
+    write(ByteUtil.toByteArray("10101010"));
   }
 
   public int getBitFrequency() {
