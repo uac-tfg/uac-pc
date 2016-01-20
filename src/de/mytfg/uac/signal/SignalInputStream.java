@@ -34,8 +34,6 @@ public class SignalInputStream extends InputStream {
     byte data = 0;
     int frequency = config.getInt("mainfrequency");
     for(int i = 0; i < 8; i++) {
-//      goertzel.doBlock(samplesPerBit, config.getInt("mainfrequency"));
-//      double magnitude = goertzel.getMagnitude();
       boolean symbol = readSymbol(frequency);
       if (symbol) {
         data = ByteUtil.setBit(data, i, (byte) 1);
@@ -45,7 +43,6 @@ public class SignalInputStream extends InputStream {
   }
   
   public void synchronize() throws IOException {
-//    System.out.println(samplesPerBit);
     double[] samples = new double[samplesPerBit * 2];
     int maxOffset = -1;
     double maxMagnitude = 0;
@@ -67,41 +64,10 @@ public class SignalInputStream extends InputStream {
         inBuffer.reset();
       }
     }
-    int skip = samplesPerBit - maxOffset + samplesPerBit;
-    System.out.println("Skipping frames for snychronizing: " + skip);
-    in.skip(maxOffset);
-    for(int i = 0; i < 6; i++) {
-      boolean symbol = readSymbol(targetFrequency);
-//      System.out.print(symbol ? 1 : 0);
-    }
-//    System.out.println();
+    in.skip(maxOffset + samplesPerBit * 6);
   }
   
   public void waitFor(byte b) throws IOException {
-//    int pos = 0;
-//    double treshhold = config.getDouble("treshhold");
-//    while(true) {
-//      int frequency = config.getInt("mainfrequency");
-//      goertzel.doBlock(samplesPerBit, frequency);
-//      double magnitude = goertzel.getMagnitude();
-////      goertzel.doBlock(samplesPerBit / 2, frequency);
-////      double mag1 = goertzel.getMagnitude();
-////      goertzel.doBlock(samplesPerBit / 2 + (samplesPerBit % 2 == 1 ? 1 : 0), frequency);
-////      double mag2 = goertzel.getMagnitude();
-////      double magnitude = (mag1 + mag2) / 2;
-//      if(magnitude > treshhold && ByteUtil.getBit(b, pos) == 1) {
-//        pos++;
-////        System.out.println(pos + " " + ByteUtil.getBit(b, pos) + " " + mag1 + "\t" + mag2 + "\t" + (mag1 - mag2));
-//      } else if(magnitude < treshhold && ByteUtil.getBit(b, pos) == 0) {
-//        pos++;
-////        System.out.println(pos + " " + ByteUtil.getBit(b, pos) + " " + mag1 + "\t" + mag2 + "\t" + (mag1 - mag2));
-//      } else {
-//        pos = 0;
-//      }
-//      if(pos == 8) {
-//        break;
-//      }
-//    }
     int pos = 0;
     while(true) {
       int frequency = config.getInt("mainfrequency");
