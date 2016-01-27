@@ -3,6 +3,7 @@ package de.mytfg.uac.signal;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import de.mytfg.uac.util.AverageTimer;
 import de.mytfg.uac.util.ByteUtil;
 import de.mytfg.uac.wave.stream.InputWaveSine;
 import de.mytfg.uac.wave.stream.OutputWave;
@@ -39,6 +40,7 @@ public class SignalOutputStream extends OutputStream {
 
   @Override
   public void write(int ib) throws IOException {
+    AverageTimer.getTimer("SignalOutputStream").begin();
     byte b = (byte) ib;
     int frequency = config.getInt("mainfrequency");
     int samplingrate = config.getInt("samplingrate");
@@ -56,6 +58,7 @@ public class SignalOutputStream extends OutputStream {
         }
       }
     }
+    AverageTimer.getTimer("SignalOutputStream").end();
   }
   
   public void synchronize() throws IOException {
