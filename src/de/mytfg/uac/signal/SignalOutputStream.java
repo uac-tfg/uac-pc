@@ -50,7 +50,8 @@ public class SignalOutputStream extends OutputStream {
         InputWaveSine sine = waveDataGenerators[0][0];
         sine.reset();
         for(int j = 0; j < samplesPerBit; j++) {
-          out.writeSample(sine.readSample());
+          double val = sine.readSample();
+          out.writeSample(val);
         }
       } else {
         for(int j = 0; j < samplesPerBit; j++) {

@@ -13,7 +13,7 @@ import de.mytfg.uac.util.SimpleAudioConversion;
 public class OutputWaveSpeaker extends OutputWave {
 
   private static final int BYTES = 2;
-  private static final int BUFFER_SIZE = 128;
+  private static final int BUFFER_SIZE = 1;
   
   private SourceDataLine line;
   private byte[] buffer;
