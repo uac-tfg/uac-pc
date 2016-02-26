@@ -1,4 +1,4 @@
-package de.mytfg.uac.wave.wav;
+package de.mytfg.uac.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
