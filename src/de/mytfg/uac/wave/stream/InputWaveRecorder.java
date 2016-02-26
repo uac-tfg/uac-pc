@@ -4,7 +4,6 @@ import java.io.EOFException;
 import java.io.IOException;
 
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
@@ -24,7 +23,6 @@ public class InputWaveRecorder extends InputWave {
     try {
       line = AudioSystem.getTargetDataLine(format);
       line.open();
-//      in = AudioSystem.getAudioInputStream(new File("c.wav"));
     } catch (LineUnavailableException e) {
       throw new RuntimeException("Unable to open line for recording!", e);
     }

@@ -13,7 +13,7 @@ public class SignalOutputStream extends OutputStream {
   private SignalConfig config;
   private OutputWave out;
 
-  private InputWaveSine[][] waveDataGenerators;
+  private InputWaveSine sine;
   private int samplesPerBit;
 
   public SignalOutputStream(OutputWave out, SignalConfig config) {
@@ -21,20 +21,8 @@ public class SignalOutputStream extends OutputStream {
     this.config = config;
 
     int samplingrate = config.getInt("samplingrate");
-    int fhssCount = config.getInt("fhss.count");
-    int fhssWidth = config.getInt("fhss.width");
-    int dsssCount = config.getInt("dsss.count");
-    int dsssWidth = config.getInt("dsss.width");
     int mainFrequency = config.getInt("mainfrequency");
-    int lowestFrequency = mainFrequency - (fhssCount * fhssWidth + dsssCount * dsssWidth) / 2;
-//    int bitFrequency = lowestFrequency / config.getInt("periodsperbit");
-    waveDataGenerators = new InputWaveSine[fhssCount][dsssCount];
-    for (int i = 0; i < fhssCount; i++) {
-      for (int j = 0; j < dsssCount; j++) {
-        int frequency = fhssWidth * i + dsssWidth * j + lowestFrequency;
-        waveDataGenerators[i][j] = new InputWaveSine(frequency, 0, samplingrate);
-      }
-    }
+    sine = new InputWaveSine(mainFrequency, 0, samplingrate);
     samplesPerBit = samplingrate / getBitFrequency();
   }
 
@@ -42,12 +30,9 @@ public class SignalOutputStream extends OutputStream {
   public void write(int ib) throws IOException {
     AverageTimer.getTimer("SignalOutputStream").begin();
     byte b = (byte) ib;
-    int frequency = config.getInt("mainfrequency");
-    int samplingrate = config.getInt("samplingrate");
     for(int i = 0; i < 8; i++) {
       byte bit = ByteUtil.getBit(b, i);
       if(bit == 1) {
-        InputWaveSine sine = waveDataGenerators[0][0];
         sine.reset();
         for(int j = 0; j < samplesPerBit; j++) {
           double val = sine.readSample();

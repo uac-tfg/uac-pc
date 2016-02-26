@@ -14,7 +14,6 @@ public class SignalInputStream extends InputStream {
   private SignalConfig config;
   private Goertzel goertzel;
   
-  private long hopRandomSeed;
   private int samplesPerBit;
   private int samplingrate;
   private double treshhold;
@@ -25,7 +24,6 @@ public class SignalInputStream extends InputStream {
     samplingrate = config.getInt("samplingrate");
     treshhold = config.getDouble("treshhold");
     samplesPerBit = samplingrate / getBitFrequency();
-    hopRandomSeed = config.getLong("fhss.seed");
     goertzel = new Goertzel(in, samplingrate);
   }
 

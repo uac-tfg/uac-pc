@@ -64,10 +64,6 @@ public class LineHelper {
     }
   }
 
-  public static void play(WavFile wavFile) {
-    play(wavFile.getFile());
-  }
-
   public static void capture(File file, final int duration, AudioFormat audioFormat) {
     try {
       // Obtain and open the line.
