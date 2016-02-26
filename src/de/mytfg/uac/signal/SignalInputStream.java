@@ -16,13 +16,13 @@ public class SignalInputStream extends InputStream {
   
   private int samplesPerBit;
   private int samplingrate;
-  private double treshhold;
+  private double threshold;
 
   public SignalInputStream(InputWave in, SignalConfig config) {
     this.in = in;
     this.config = config;
     samplingrate = config.getInt("samplingrate");
-    treshhold = config.getDouble("treshhold");
+    threshold = config.getDouble("threshold");
     samplesPerBit = samplingrate / getBitFrequency();
     goertzel = new Goertzel(in, samplingrate);
   }
@@ -45,7 +45,6 @@ public class SignalInputStream extends InputStream {
     int maxOffset = -1;
     double maxMagnitude = 0;
     int targetFrequency = config.getInt("mainfrequency");
-    double treshhold = config.getDouble("treshhold");
     
     while(maxOffset == -1) {
       in.readSample(samples);
@@ -55,7 +54,7 @@ public class SignalInputStream extends InputStream {
         Goertzel g = new Goertzel(inBuffer, samplingrate);
         g.doBlock(samplesPerBit, targetFrequency);
         double mag = g.getMagnitude();
-        if(mag > treshhold && mag > maxMagnitude) {
+        if(mag > threshold && mag > maxMagnitude) {
           maxOffset = i;
           maxMagnitude = mag;
         }
@@ -86,7 +85,7 @@ public class SignalInputStream extends InputStream {
   public boolean readSymbol(int frequency) throws IOException {
     goertzel.doBlock(samplesPerBit, frequency);
     double magnitude = goertzel.getMagnitude();
-    return magnitude > treshhold;
+    return magnitude > threshold;
   }
 
   public int getBitFrequency() {
