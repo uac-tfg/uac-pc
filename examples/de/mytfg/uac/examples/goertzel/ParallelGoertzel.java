@@ -3,7 +3,7 @@ package de.mytfg.uac.examples.goertzel;
 import java.io.IOException;
 import java.util.Arrays;
 
-import de.mytfg.uac.wave.stream.Goertzel;
+import de.mytfg.uac.wave.stream.GoertzelParrallelized;
 import de.mytfg.uac.wave.stream.GoertzelManager;
 import de.mytfg.uac.wave.stream.InputWaveDouble;
 import de.mytfg.uac.wave.stream.InputWaveSine;
@@ -33,8 +33,8 @@ public class ParallelGoertzel {
       }
       b.reset();
       for (int j = 0; j < samplesPerBit; j++) {
-//        samples[samplesPerBit * (2 + i * 2 + 1) + j] = b.readSample();
-        samples[samplesPerBit * (2 + i * 2 + 1) + j] = 0;
+        samples[samplesPerBit * (2 + i * 2 + 1) + j] = b.readSample();
+//        samples[samplesPerBit * (2 + i * 2 + 1) + j] = 0;
       }
     }
     // 0 afterwards
@@ -46,14 +46,14 @@ public class ParallelGoertzel {
 
     InputWaveDouble in = new InputWaveDouble(samples);
     GoertzelManager manager = new GoertzelManager(in, samplingrate, samplesPerBit);
-    Goertzel ag1 = new Goertzel(aF, 0);
-    Goertzel ag2 = new Goertzel(aF, samplesPerBit / 4);
-    Goertzel ag3 = new Goertzel(aF, (samplesPerBit / 4) * 2);
-    Goertzel ag4 = new Goertzel(aF, (samplesPerBit / 4) * 3);
-    Goertzel bg1 = new Goertzel(bF, 0);
-    Goertzel bg2 = new Goertzel(bF, samplesPerBit / 4);
-    Goertzel bg3 = new Goertzel(bF, (samplesPerBit / 4) * 2);
-    Goertzel bg4 = new Goertzel(bF, (samplesPerBit / 4) * 3);
+    GoertzelParrallelized ag1 = new GoertzelParrallelized(aF, 0);
+    GoertzelParrallelized ag2 = new GoertzelParrallelized(aF, samplesPerBit / 4);
+    GoertzelParrallelized ag3 = new GoertzelParrallelized(aF, (samplesPerBit / 4) * 2);
+    GoertzelParrallelized ag4 = new GoertzelParrallelized(aF, (samplesPerBit / 4) * 3);
+    GoertzelParrallelized bg1 = new GoertzelParrallelized(bF, 0);
+    GoertzelParrallelized bg2 = new GoertzelParrallelized(bF, samplesPerBit / 4);
+    GoertzelParrallelized bg3 = new GoertzelParrallelized(bF, (samplesPerBit / 4) * 2);
+    GoertzelParrallelized bg4 = new GoertzelParrallelized(bF, (samplesPerBit / 4) * 3);
     manager.add(ag1, ag2, ag3, ag4, bg1, bg2, bg3, bg4);
     
     for(int i = 0; i < samples.length; i++) {
@@ -78,8 +78,8 @@ public class ParallelGoertzel {
     }
   }
   
-  private static void print(Goertzel... goertzels) {
-    for(Goertzel g : goertzels) {
+  private static void print(GoertzelParrallelized... goertzels) {
+    for(GoertzelParrallelized g : goertzels) {
       System.out.println(g.getFrequency() + " @ " + g.getOffset() + ": " + g.getMagnitude());
     }
   }

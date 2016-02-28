@@ -11,7 +11,7 @@ public class GoertzelManager {
   
   private int length;
   private HashMap<Integer, FrequencyData> frequenciesData = new HashMap<>();
-  private ArrayList<Goertzel>[] goertzels;
+  private ArrayList<GoertzelParrallelized>[] goertzels;
   
   private int offset;
 
@@ -29,25 +29,23 @@ public class GoertzelManager {
     double sin = Math.sin(omega);
     double cos = Math.cos(omega);
     FrequencyData data = new FrequencyData(frequency, sin, cos);
-//    System.out.println("|||| " + data.frequency + " " + data.sin + " " + data.cos);
     frequenciesData.put(frequency, data);
     return data;
   }
   
-  public void add(Goertzel... goertzels) {
-    for(Goertzel g : goertzels) {
+  public void add(GoertzelParrallelized... goertzels) {
+    for(GoertzelParrallelized g : goertzels) {
       add(g);
     }
   }
   
-  public void add(Goertzel g) {
+  public void add(GoertzelParrallelized g) {
     FrequencyData data = frequenciesData.get(g.getFrequency());
     if(data == null) {
       data = init(g.getFrequency());
     }
-//    System.out.println("--- " + data.frequency + " " + data.sin + " " + data.cos);
     g.init(data.sin, data.cos);
-    ArrayList<Goertzel> list = goertzels[g.getOffset()];
+    ArrayList<GoertzelParrallelized> list = goertzels[g.getOffset()];
     if(list == null) {
       list = new ArrayList<>();
       goertzels[g.getOffset()] = list;
@@ -56,14 +54,18 @@ public class GoertzelManager {
   }
   
   public void processSample() throws IOException {
+    offset++;
+    if(offset == length) {
+      offset = 0;
+    }
+    
     double sample = in.readSample();
-//    System.out.println("===== " + sample);
     for(int i = 0; i < length; i++) {
-      ArrayList<Goertzel> list = goertzels[i];
+      ArrayList<GoertzelParrallelized> list = goertzels[i];
       if(list == null) {
         continue;
       }
-      for(Goertzel g : list) {
+      for(GoertzelParrallelized g : list) {
         g.processSample(sample);
         if(i == offset) {
           g.newBlock();
@@ -71,15 +73,11 @@ public class GoertzelManager {
       }
     }
     
-    offset++;
-    if(offset == length) {
-      offset = 0;
-    }
   }
   
-  public Goertzel getGoertzel(int frequency, int offset) {
-    ArrayList<Goertzel> list = goertzels[offset];
-    Goertzel g = list.stream().filter((goertzel) -> goertzel.getFrequency() == frequency).findFirst().get();
+  public GoertzelParrallelized getGoertzel(int frequency, int offset) {
+    ArrayList<GoertzelParrallelized> list = goertzels[offset];
+    GoertzelParrallelized g = list.stream().filter((goertzel) -> goertzel.getFrequency() == frequency).findFirst().get();
     return g;
   }
 

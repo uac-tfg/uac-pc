@@ -1,79 +1,44 @@
 package de.mytfg.uac.wave.stream;
 
+import java.io.IOException;
+
 import de.mytfg.uac.util.ComplexNumber;
 
-public class Goertzel {
-  
-  private int frequency;
-  private int offset;
-  private double sin;
-  private double cos;
-  
-  private double d0;
-  private double d1;
-  private double d2;
-  
-  private boolean enabled;
-  
-  private ComplexNumber complex;
 
-  public Goertzel(int frequency, int offset) {
-    this.frequency = frequency;
-    this.offset = offset;
+public class Goertzel {
+
+  private InputWave in;
+  private ComplexNumber complex;
+  private int samplingrate;
+
+  public Goertzel(InputWave in, int samplingrate) {
+    this.in = in;
+    this.samplingrate = samplingrate;
   }
-  
-  public void init(double cos, double sin) {
-    this.cos = cos;
-    this.sin = sin;
-  }
-  
-  public void processSample(double sample) {
-    d0 = 2 * cos * d1 - d2 + sample;
-    d2 = d1;
-    d1 = d0;
-    System.out.println(frequency + " " + offset + " " + sample + " " + d0 + " " + cos);
-  }
-  
-  public void newBlock() {
-    d0 = 2 * cos * d1 - d2;
+
+  public void doBlock(int length, int targetFrequency) throws IOException {
+    double k = (((double) length * (double) targetFrequency) / (double) samplingrate);
+    double omega = (2d * Math.PI * k) / (double) length;
+    double sin = Math.sin(omega);
+    double cos = Math.cos(omega);
+    double a1 = 2.0 * cos;
+    double d1 = 0;
+    double d2 = 0;
+    double d0;
+    for (int i = 0; i < length; i++) {
+      double sample = in.readSample();
+      d0 = a1 * d1 - d2 + sample;
+      d2 = d1;
+      d1 = d0;
+    }
+    d0 = a1 * d1 - d2;
     d2 = d1;
     d1 = d0;
     complex = new ComplexNumber(d1 - d2 * cos, d2 * sin);
-    System.out.println("///// " + frequency + " " + offset + " " + getMagnitude());
-    d0 = 0;
-    d1 = 0;
-    d2 = 0;
   }
   
   public double getMagnitude() {
-    if(complex == null) {
-      return -1;
-    }
     return (complex.getReal() * complex.getReal() + complex.getIma() * complex.getIma());
-  }
-
-  public int getFrequency() {
-    return frequency;
-  }
-
-  public void setFrequency(int frequency) {
-    this.frequency = frequency;
-  }
-
-  public boolean isEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
-  }
-
-  public int getOffset() {
-    return offset;
-  }
-
-  public void setOffset(int offset) {
-    this.offset = offset;
   }
 
 }
