@@ -78,6 +78,12 @@ public class GoertzelManager {
     
   }
   
+  public void processSamples(int count) throws IOException {
+    for(int i = 0; i < count; i++) {
+      processSample();
+    }
+  }
+  
   public GoertzelParrallelized getGoertzel(int frequency, int offset) {
     ArrayList<GoertzelParrallelized> list = goertzels[offset];
     GoertzelParrallelized g = list.stream().filter((goertzel) -> goertzel.getFrequency() == frequency).findFirst().get();
