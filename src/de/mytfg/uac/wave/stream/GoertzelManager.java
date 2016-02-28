@@ -66,6 +66,9 @@ public class GoertzelManager {
         continue;
       }
       for(GoertzelParrallelized g : list) {
+        if(!g.isEnabled()) {
+          continue;
+        }
         g.processSample(sample);
         if(i == offset) {
           g.newBlock();

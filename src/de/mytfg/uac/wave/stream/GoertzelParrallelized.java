@@ -33,13 +33,16 @@ public class GoertzelParrallelized {
   }
   
   public void processSample(double sample) {
+    if(complex == null) {
+      return;
+    }
     d0 = a * d1 - d2 + sample;
     d2 = d1;
     d1 = d0;
   }
   
   public void newBlock() {
-    d0 = 2 * cos * d1 - d2;
+    d0 = a * d1 - d2;
     d2 = d1;
     d1 = d0;
     complex = new ComplexNumber(d1 - d2 * cos, d2 * sin);
@@ -69,6 +72,9 @@ public class GoertzelParrallelized {
 
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
+    if(!enabled) {
+      complex = null;
+    }
   }
 
   public int getOffset() {
