@@ -10,14 +10,15 @@ import de.mytfg.uac.wave.stream.InputWaveSine;
 public class ParallelGoertzelSimple {
   
   public static void main(String[] args) throws IOException {
-    int samplingrate = 1000;
-    int frequency = 100;
+    int samplingrate = 10000;
+    int frequency = 140;
     InputWaveSine sine = new InputWaveSine(frequency, 0, samplingrate);
     
     int length = (samplingrate / frequency) * 3;
+    System.out.println(length);
     
     
-    for(int i = 100; i < 110; i += 10) {
+    for(int i = 10; i < 300; i += 10) {
       sine.reset();
       GoertzelManager manager = new GoertzelManager(sine, samplingrate, length);
       GoertzelParrallelized g = new GoertzelParrallelized(i, 0);

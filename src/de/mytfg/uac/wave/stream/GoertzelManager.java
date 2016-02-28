@@ -24,8 +24,8 @@ public class GoertzelManager {
   }
   
   private FrequencyData init(int frequency) {
-    double k = (((double) length * (double) frequency) / (double) samplingrate);
-    double omega = (2d * Math.PI * k) / (double) length;
+    double k = frequency / (double) samplingrate;
+    double omega = 2d * Math.PI * k;
     double sin = Math.sin(omega);
     double cos = Math.cos(omega);
     FrequencyData data = new FrequencyData(frequency, sin, cos);

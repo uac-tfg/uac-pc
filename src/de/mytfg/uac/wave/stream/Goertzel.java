@@ -17,8 +17,8 @@ public class Goertzel {
   }
 
   public void doBlock(int length, int targetFrequency) throws IOException {
-    double k = (((double) length * (double) targetFrequency) / (double) samplingrate);
-    double omega = (2d * Math.PI * k) / (double) length;
+    double k = targetFrequency / (double) samplingrate;
+    double omega = 2d * Math.PI * k;
     double sin = Math.sin(omega);
     double cos = Math.cos(omega);
     double a1 = 2.0 * cos;
