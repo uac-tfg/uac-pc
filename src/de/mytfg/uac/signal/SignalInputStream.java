@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.mytfg.uac.util.ByteUtil;
-import de.mytfg.uac.wave.stream.Goertzel;
+import de.mytfg.uac.wave.stream.GoertzelManager;
 import de.mytfg.uac.wave.stream.InputWave;
 import de.mytfg.uac.wave.stream.InputWaveDouble;
 
@@ -12,7 +12,7 @@ public class SignalInputStream extends InputStream {
   
   private InputWave in;
   private SignalConfig config;
-  private Goertzel goertzel;
+  private GoertzelManager goertzel;
   
   private int samplesPerBit;
   private int samplingrate;
@@ -24,7 +24,7 @@ public class SignalInputStream extends InputStream {
     samplingrate = config.getInt("samplingrate");
     threshold = config.getDouble("threshold");
     samplesPerBit = samplingrate / getBitFrequency();
-    goertzel = new Goertzel(in, samplingrate);
+    goertzel = new GoertzelManager(in, samplingrate);
   }
 
   @Override
@@ -51,7 +51,7 @@ public class SignalInputStream extends InputStream {
       InputWaveDouble inBuffer = new InputWaveDouble(samples);
       for(int i = 0; i < samplesPerBit; i++) {
         inBuffer.skip(i);
-        Goertzel g = new Goertzel(inBuffer, samplingrate);
+        GoertzelManager g = new GoertzelManager(inBuffer, samplingrate);
         g.doBlock(samplesPerBit, targetFrequency);
         double mag = g.getMagnitude();
         if(mag > threshold && mag > maxMagnitude) {
