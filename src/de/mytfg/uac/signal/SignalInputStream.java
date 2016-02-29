@@ -4,33 +4,39 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.mytfg.uac.util.ByteUtil;
-import de.mytfg.uac.wave.stream.Goertzel;
+import de.mytfg.uac.wave.stream.GoertzelManager;
+import de.mytfg.uac.wave.stream.GoertzelParallelized;
 import de.mytfg.uac.wave.stream.InputWave;
-import de.mytfg.uac.wave.stream.InputWaveDouble;
 
 public class SignalInputStream extends InputStream {
   
-  private InputWave in;
   private SignalConfig config;
-  private Goertzel goertzel;
+  private GoertzelParallelized goertzel;
+  private GoertzelParallelized[] goertzels;
+  private GoertzelManager goertzelManager;
   
   private int samplesPerBit;
   private int samplingrate;
   private double threshold;
+  private int frequency;
 
   public SignalInputStream(InputWave in, SignalConfig config) {
-    this.in = in;
     this.config = config;
     samplingrate = config.getInt("samplingrate");
     threshold = config.getDouble("threshold");
+    int frequency = config.getInt("mainfrequency");
     samplesPerBit = samplingrate / getBitFrequency();
-    goertzel = new Goertzel(in, samplingrate);
+    goertzelManager = new GoertzelManager(in, samplingrate, samplesPerBit);
+    goertzels = new GoertzelParallelized[samplesPerBit];
+    for(int i = 0; i < samplesPerBit; i++) {
+      goertzels[i] = new GoertzelParallelized(frequency, i);
+    }
+    goertzelManager.add(goertzels);
   }
 
   @Override
   public int read() throws IOException {
     byte data = 0;
-    int frequency = config.getInt("mainfrequency");
     for(int i = 0; i < 8; i++) {
       boolean symbol = readSymbol(frequency);
       if (symbol) {
@@ -41,27 +47,44 @@ public class SignalInputStream extends InputStream {
   }
   
   public void synchronize() throws IOException {
-    double[] samples = new double[samplesPerBit * 2];
-    int maxOffset = -1;
-    double maxMagnitude = 0;
-    int targetFrequency = config.getInt("mainfrequency");
+    for(GoertzelParallelized g : goertzels) {
+      g.setEnabled(true);
+    }
     
-    while(maxOffset == -1) {
-      in.readSample(samples);
-      InputWaveDouble inBuffer = new InputWaveDouble(samples);
-      for(int i = 0; i < samplesPerBit; i++) {
-        inBuffer.skip(i);
-        Goertzel g = new Goertzel(inBuffer, samplingrate);
-        g.doBlock(samplesPerBit, targetFrequency);
-        double mag = g.getMagnitude();
-        if(mag > threshold && mag > maxMagnitude) {
-          maxOffset = i;
-          maxMagnitude = mag;
-        }
-        inBuffer.reset();
+    GoertzelParallelized max = null;
+    int i = 0;
+    
+    while(true) {
+      goertzelManager.processSample();
+      GoertzelParallelized g = goertzels[goertzelManager.getOffset()];
+      double mag = g.getMagnitude();
+//      System.out.print(i != 0 ? (i + "\n") : "");
+      if(mag == -1 || mag < threshold) {
+        i = 0;
+        continue;
+      }
+//      System.out.print("High @ " + g.getOffset() + ":\t" + g.getMagnitude());
+      if(max == null || max.getMagnitude() < g.getMagnitude()) {
+//        System.out.print(" MAX");
+        max = g;
+      }
+//      System.out.println();
+      i++;
+      if(i >= samplesPerBit * (1.125)) {
+//        System.out.println("Done at " + i);
+        break;
       }
     }
-    in.skip(maxOffset + samplesPerBit * 6);
+    goertzel = max;
+    System.out.println("SELECT " + goertzel.getOffset() + ":\t" + goertzel.getMagnitude());
+    
+    for(GoertzelParallelized g : goertzels) {
+      if(g.getOffset() != max.getOffset()) {
+        g.setEnabled(false);
+      }
+    }
+    
+    goertzelManager.processSamples(samplesPerBit * 7);
   }
   
   public void waitFor(byte b) throws IOException {
@@ -83,7 +106,7 @@ public class SignalInputStream extends InputStream {
   }
   
   public boolean readSymbol(int frequency) throws IOException {
-    goertzel.doBlock(samplesPerBit, frequency);
+    goertzelManager.processSamples(samplesPerBit);
     double magnitude = goertzel.getMagnitude();
     return magnitude > threshold;
   }

@@ -3,7 +3,7 @@ package de.mytfg.uac.examples.goertzel;
 import java.io.IOException;
 import java.util.Arrays;
 
-import de.mytfg.uac.wave.stream.GoertzelParrallelized;
+import de.mytfg.uac.wave.stream.GoertzelParallelized;
 import de.mytfg.uac.wave.stream.GoertzelManager;
 import de.mytfg.uac.wave.stream.InputWaveDouble;
 import de.mytfg.uac.wave.stream.InputWaveSine;
@@ -46,14 +46,14 @@ public class ParallelGoertzel {
 
     InputWaveDouble in = new InputWaveDouble(samples);
     GoertzelManager manager = new GoertzelManager(in, samplingrate, samplesPerBit);
-    GoertzelParrallelized ag1 = new GoertzelParrallelized(aF, 0);
-    GoertzelParrallelized ag2 = new GoertzelParrallelized(aF, samplesPerBit / 4);
-    GoertzelParrallelized ag3 = new GoertzelParrallelized(aF, (samplesPerBit / 4) * 2);
-    GoertzelParrallelized ag4 = new GoertzelParrallelized(aF, (samplesPerBit / 4) * 3);
-    GoertzelParrallelized bg1 = new GoertzelParrallelized(bF, 0);
-    GoertzelParrallelized bg2 = new GoertzelParrallelized(bF, samplesPerBit / 4);
-    GoertzelParrallelized bg3 = new GoertzelParrallelized(bF, (samplesPerBit / 4) * 2);
-    GoertzelParrallelized bg4 = new GoertzelParrallelized(bF, (samplesPerBit / 4) * 3);
+    GoertzelParallelized ag1 = new GoertzelParallelized(aF, 0);
+    GoertzelParallelized ag2 = new GoertzelParallelized(aF, samplesPerBit / 4);
+    GoertzelParallelized ag3 = new GoertzelParallelized(aF, (samplesPerBit / 4) * 2);
+    GoertzelParallelized ag4 = new GoertzelParallelized(aF, (samplesPerBit / 4) * 3);
+    GoertzelParallelized bg1 = new GoertzelParallelized(bF, 0);
+    GoertzelParallelized bg2 = new GoertzelParallelized(bF, samplesPerBit / 4);
+    GoertzelParallelized bg3 = new GoertzelParallelized(bF, (samplesPerBit / 4) * 2);
+    GoertzelParallelized bg4 = new GoertzelParallelized(bF, (samplesPerBit / 4) * 3);
     manager.add(ag1, ag2, ag3, ag4, bg1, bg2, bg3, bg4);
     
     for(int i = 0; i < samples.length; i++) {
@@ -78,8 +78,8 @@ public class ParallelGoertzel {
     }
   }
   
-  private static void print(GoertzelParrallelized... goertzels) {
-    for(GoertzelParrallelized g : goertzels) {
+  private static void print(GoertzelParallelized... goertzels) {
+    for(GoertzelParallelized g : goertzels) {
       System.out.println(g.getFrequency() + " @ " + g.getOffset() + ": " + g.getMagnitude());
     }
   }

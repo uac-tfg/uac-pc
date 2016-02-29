@@ -11,7 +11,7 @@ public class GoertzelManager {
   
   private int length;
   private HashMap<Integer, FrequencyData> frequenciesData = new HashMap<>();
-  private ArrayList<GoertzelParrallelized>[] goertzels;
+  private ArrayList<GoertzelParallelized>[] goertzels;
   
   private int offset;
 
@@ -33,19 +33,19 @@ public class GoertzelManager {
     return data;
   }
   
-  public void add(GoertzelParrallelized... goertzels) {
-    for(GoertzelParrallelized g : goertzels) {
+  public void add(GoertzelParallelized... goertzels) {
+    for(GoertzelParallelized g : goertzels) {
       add(g);
     }
   }
   
-  public void add(GoertzelParrallelized g) {
+  public void add(GoertzelParallelized g) {
     FrequencyData data = frequenciesData.get(g.getFrequency());
     if(data == null) {
       data = init(g.getFrequency());
     }
     g.init(data.sin, data.cos);
-    ArrayList<GoertzelParrallelized> list = goertzels[g.getOffset()];
+    ArrayList<GoertzelParallelized> list = goertzels[g.getOffset()];
     if(list == null) {
       list = new ArrayList<>();
       goertzels[g.getOffset()] = list;
@@ -61,11 +61,11 @@ public class GoertzelManager {
     
     double sample = in.readSample();
     for(int i = 0; i < length; i++) {
-      ArrayList<GoertzelParrallelized> list = goertzels[i];
+      ArrayList<GoertzelParallelized> list = goertzels[i];
       if(list == null) {
         continue;
       }
-      for(GoertzelParrallelized g : list) {
+      for(GoertzelParallelized g : list) {
         if(!g.isEnabled()) {
           continue;
         }
@@ -84,10 +84,14 @@ public class GoertzelManager {
     }
   }
   
-  public GoertzelParrallelized getGoertzel(int frequency, int offset) {
-    ArrayList<GoertzelParrallelized> list = goertzels[offset];
-    GoertzelParrallelized g = list.stream().filter((goertzel) -> goertzel.getFrequency() == frequency).findFirst().get();
+  public GoertzelParallelized getGoertzel(int frequency, int offset) {
+    ArrayList<GoertzelParallelized> list = goertzels[offset];
+    GoertzelParallelized g = list.stream().filter((goertzel) -> goertzel.getFrequency() == frequency).findFirst().get();
     return g;
+  }
+
+  public int getOffset() {
+    return offset;
   }
 
 }

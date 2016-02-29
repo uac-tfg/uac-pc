@@ -34,8 +34,8 @@ public class Terminal implements Runnable {
     config = new SignalConfig();
     config.put("mainfrequency", 250);
     config.put("samplingrate", 2500);
-    config.put("periodsperbit", 3);
-    config.put("threshold", 0.00075d);
+    config.put("periodsperbit", 2);
+    config.put("threshold", 1d);
 
     receiverThread = new Thread(this, "Receiver");
 
@@ -78,7 +78,7 @@ public class Terminal implements Runnable {
       // inSignal.synchronize();
       while (run) {
         inSignal.synchronize();
-        // inSignal.waitFor(START_BYTE);
+//        inSignal.waitFor(START_BYTE);
         byte read = (byte) inSignal.read();
         System.out.println(ByteUtil.toBitString(new byte[] {read}));
         if (read != START_BYTE) {

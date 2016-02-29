@@ -2,7 +2,7 @@ package de.mytfg.uac.examples.goertzel;
 
 import java.io.IOException;
 
-import de.mytfg.uac.wave.stream.GoertzelParrallelized;
+import de.mytfg.uac.wave.stream.GoertzelParallelized;
 import de.mytfg.uac.wave.stream.GoertzelManager;
 import de.mytfg.uac.wave.stream.Goertzel;
 import de.mytfg.uac.wave.stream.InputWaveSine;
@@ -21,7 +21,7 @@ public class ParallelGoertzelSimple {
     for(int i = 10; i < 300; i += 10) {
       sine.reset();
       GoertzelManager manager = new GoertzelManager(sine, samplingrate, length);
-      GoertzelParrallelized g = new GoertzelParrallelized(i, 0);
+      GoertzelParallelized g = new GoertzelParallelized(i, 0);
       manager.add(g);
       for(int j = 0; j < length; j++) {
         manager.processSample();
