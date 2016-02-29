@@ -35,7 +35,8 @@ public class Terminal implements Runnable {
     config.put("mainfrequency", 250);
     config.put("samplingrate", 2500);
     config.put("periodsperbit", 2);
-    config.put("threshold", 1d);
+    config.put("modulation", "am");
+    config.put("threshold", 0.001d);
 
     receiverThread = new Thread(this, "Receiver");
 
