@@ -145,10 +145,10 @@ public class SignalInputStream extends InputStream {
     } else if(modulation.equals("fm")) {
       double highMag = goertzels[offset * 2].getMagnitude();
       double lowMag = goertzels[offset * 2 + 1].getMagnitude();
-//      double diff = highMag - lowMag;
-//      System.out.println((int) highMag + "\t" + (int) lowMag + "\t" + (int) diff + "\t" + (diff > 0 ? '1' : '0'));
+      double diff = highMag - lowMag;
+      System.out.println((int) highMag + "\t" + (int) lowMag + "\t" + (int) diff + "\t" + (diff > 0 ? '1' : '0'));
 //      System.out.println((int) highMag);
-      return highMag > threshold;
+      return diff > 0;
     }
     return false;
   }
