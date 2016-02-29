@@ -58,20 +58,15 @@ public class SignalInputStream extends InputStream {
       goertzelManager.processSample();
       GoertzelParallelized g = goertzels[goertzelManager.getOffset()];
       double mag = g.getMagnitude();
-//      System.out.print(i != 0 ? (i + "\n") : "");
       if(mag == -1 || mag < threshold) {
         i = 0;
         continue;
       }
-//      System.out.print("High @ " + g.getOffset() + ":\t" + g.getMagnitude());
       if(max == null || max.getMagnitude() < g.getMagnitude()) {
-//        System.out.print(" MAX");
         max = g;
       }
-//      System.out.println();
       i++;
       if(i >= samplesPerBit * (1.125)) {
-//        System.out.println("Done at " + i);
         break;
       }
     }
