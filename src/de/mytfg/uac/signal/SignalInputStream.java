@@ -61,12 +61,15 @@ public class SignalInputStream extends InputStream {
       throw new IllegalArgumentException("Unknown modulation type!");
     }
     goertzelManager.add(goertzels);
+    
+    System.out.println("Spb: " + samplesPerBit);
   }
 
   @Override
   public int read() throws IOException {
     byte data = 0;
     for(int i = 0; i < 8; i++) {
+//      System.out.print(i + " ");
       boolean symbol = readSymbol();
       if (symbol) {
         data = ByteUtil.setBit(data, i, (byte) 1);
@@ -141,12 +144,13 @@ public class SignalInputStream extends InputStream {
     if(modulation.equals("am")) {
       GoertzelParallelized goertzel = goertzels[offset];
       double mag = goertzel.getMagnitude();
+//      System.out.println(mag);
       return mag > threshold;
     } else if(modulation.equals("fm")) {
       double highMag = goertzels[offset * 2].getMagnitude();
       double lowMag = goertzels[offset * 2 + 1].getMagnitude();
       double diff = highMag - lowMag;
-      System.out.println((int) highMag + "\t" + (int) lowMag + "\t" + (int) diff + "\t" + (diff > 0 ? '1' : '0'));
+//      System.out.println((int) highMag + "\t" + (int) lowMag + "\t" + (int) diff + "\t" + (diff > 0 ? '1' : '0'));
 //      System.out.println((int) highMag);
       return diff > 0;
     }
