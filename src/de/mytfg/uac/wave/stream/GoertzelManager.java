@@ -54,6 +54,7 @@ public class GoertzelManager {
   }
   
   public void processSample() throws IOException {
+    
     offset++;
     if(offset == length) {
       offset = 0;

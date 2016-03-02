@@ -30,11 +30,11 @@ public class ByteTest implements Runnable {
     
 //    config.put("modulation", "am");
 //    config.put("mainfrequency", 250);
-    config.put("threshold", 10d);
+    config.put("threshold", 0.1d);
     
     config.put("modulation", "fm");
     config.put("frequency.high", 250);
-    config.put("frequency.low", 300);
+    config.put("frequency.low", 350);
     
     thread = new Thread(this);
     thread.start();

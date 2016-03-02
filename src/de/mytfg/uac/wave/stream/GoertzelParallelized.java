@@ -57,6 +57,10 @@ public class GoertzelParallelized {
     }
     return (complex.getReal() * complex.getReal() + complex.getIma() * complex.getIma());
   }
+  
+  public String toString() {
+    return "Goertzel " + frequency + " @ " + offset;
+  }
 
   public int getFrequency() {
     return frequency;

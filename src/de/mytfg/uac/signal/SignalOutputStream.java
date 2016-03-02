@@ -37,7 +37,7 @@ public class SignalOutputStream extends OutputStream {
         new InputWaveSine(high, 0, samplingrate),  
         new InputWaveSine(low, 0, samplingrate)
       };
-      bitFrequency = low / periodsPerBit;
+      bitFrequency = Math.min(high, low) / periodsPerBit;
       samplesPerBit = samplingrate / bitFrequency;
     } else {
       throw new IllegalArgumentException("Unknown modulation type!");
@@ -72,7 +72,7 @@ public class SignalOutputStream extends OutputStream {
   
   private void sendSine(InputWaveSine in) throws IOException {
     in.reset();
-    for (int j = 0; j < samplesPerBit; j++) {
+    for (int i = 0; i < samplesPerBit; i++) {
       double val = in.readSample();
       out.writeSample(val);
     }

@@ -32,11 +32,16 @@ public class Terminal implements Runnable {
 
   public Terminal() {
     config = new SignalConfig();
-    config.put("mainfrequency", 250);
     config.put("samplingrate", 2500);
-    config.put("periodsperbit", 2);
-    config.put("modulation", "am");
-    config.put("threshold", 0.001d);
+    config.put("periodsperbit", 3);
+    
+//    config.put("modulation", "am");
+//    config.put("mainfrequency", 250);
+    config.put("threshold", 0.1d);
+    
+    config.put("modulation", "fm");
+    config.put("frequency.high", 250);
+    config.put("frequency.low", 350);
 
     receiverThread = new Thread(this, "Receiver");
 
