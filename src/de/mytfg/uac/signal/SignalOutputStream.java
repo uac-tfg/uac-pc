@@ -79,7 +79,11 @@ public class SignalOutputStream extends OutputStream {
   }
 
   public void synchronize() throws IOException {
+    if(modulation.equals("am")) {
     write(ByteUtil.toByteArray("10101010"));
+    } else if(modulation.equals("fm")) {
+      write(ByteUtil.toByteArray(config.getString("syncbits")));
+    }
   }
 
 }

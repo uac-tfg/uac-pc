@@ -26,15 +26,16 @@ public class ByteTest implements Runnable {
   public ByteTest() {
     config = new SignalConfig();
     config.put("samplingrate", 2500);
-    config.put("periodsperbit", 3);
+    config.put("periodsperbit", 5);
     
 //    config.put("modulation", "am");
 //    config.put("mainfrequency", 250);
-    config.put("threshold", 0.1d);
+//    config.put("threshold", 100d);
     
     config.put("modulation", "fm");
     config.put("frequency.high", 250);
     config.put("frequency.low", 350);
+    config.put("syncbits", "10011001110011010110000111001100");
     
     thread = new Thread(this);
     thread.start();
