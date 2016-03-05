@@ -33,8 +33,8 @@ public class ByteTest implements Runnable {
 //    config.put("threshold", 100d);
     
     config.put("modulation", "fm");
-    config.put("frequency.high", 250);
-    config.put("frequency.low", 350);
+    config.put("frequency.high", 350);
+    config.put("frequency.low", 250);
     config.put("syncbits", "10011001110011010110000111001100");
     
     thread = new Thread(this);
