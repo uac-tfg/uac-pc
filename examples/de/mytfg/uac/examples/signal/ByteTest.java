@@ -14,7 +14,7 @@ import de.mytfg.uac.wave.stream.OutputWaveSpeaker;
 
 public class ByteTest implements Runnable {
   
-  private static final int DATA_LENGTH = 4;
+  private static final int DATA_LENGTH = 2;
   
   private SignalConfig config;
   private Thread thread;
@@ -35,8 +35,8 @@ public class ByteTest implements Runnable {
     config.put("modulation", "fm");
     config.put("frequency.high", 350);
     config.put("frequency.low", 250);
-//    config.put("syncbits", "10011001110011010110000111001100");
-    config.put("syncbits", "11110000111100001111000011110000");
+    config.put("syncbits", "10011001110011010110000111001100");
+//    config.put("syncbits", "11110000111100001111000011110000");
     
     thread = new Thread(this);
     thread.start();
@@ -56,7 +56,7 @@ public class ByteTest implements Runnable {
       try {
         in.synchronize();
         byte[] b = new byte[DATA_LENGTH];
-//        in.read(b);
+        in.read(b);
         System.out.println(ByteUtil.toBitString(b));
       } catch (IOException e) {
         e.printStackTrace();
@@ -67,6 +67,7 @@ public class ByteTest implements Runnable {
   public void send() throws IOException {
     byte[] data = new byte[DATA_LENGTH];
     random.nextBytes(data);
+//    data = ByteUtil.toByteArray("0000100000001000");
     System.out.println(ByteUtil.toBitString(data));
     out.synchronize();
     out.write(data);

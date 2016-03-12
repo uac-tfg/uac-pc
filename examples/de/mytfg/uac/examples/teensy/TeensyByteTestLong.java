@@ -19,7 +19,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
 
-public class TeensyByteTest {
+public class TeensyByteTestLong {
 
   private static final String PORT_NAMES[] = {"/dev/ttyACM0", "/dev/ttyACM1"};
   private static final int TIME_OUT = 2000;
@@ -27,6 +27,8 @@ public class TeensyByteTest {
 
   private static SerialPort serialPort;
   private static byte[] data = new byte[4];
+
+  private static BufferedWriter file;
 
   public static void initialize() {
     CommPortIdentifier portId = null;
@@ -60,6 +62,7 @@ public class TeensyByteTest {
             try {
               String inputLine = input.readLine();
               System.out.println(inputLine);
+              file.write(inputLine + "\n");
             } catch (Exception e) {
               System.err.println(e.toString());
             }
@@ -73,6 +76,8 @@ public class TeensyByteTest {
   }
 
   public static void main(String[] args) throws Exception {
+    file = new BufferedWriter(new FileWriter("test-" + getCurrentTimeStamp()));
+    
     SignalConfig config = new SignalConfig();
     config.put("samplingrate", 2500);
     config.put("periodsperbit", 4);
@@ -89,15 +94,28 @@ public class TeensyByteTest {
     
     OutputWaveSpeaker speaker = new OutputWaveSpeaker(config.getInt("samplingrate"));
     SignalOutputStream out = new SignalOutputStream(speaker, config);
-    TeensyByteTest.initialize();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    TeensyByteTestLong.initialize();
     Random r = new Random();
-    while(reader.readLine() == null || true) {
+    for(int i = 0; i < 100; i++) {
+      System.out.println(i);
+      file.write(i + "\n");
       out.synchronize();
       r.nextBytes(data);
       String dataString = ByteUtil.toBitString(data);
+      file.write(dataString + "\n");
       System.out.println(dataString);
       out.write(data);
+      Thread.sleep(2000);
+      file.write("\n");
+      file.flush();
+      System.out.println();
     }
+  }
+
+  public static String getCurrentTimeStamp() {
+    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");// dd/MM/yyyy
+    Date now = new Date();
+    String strDate = sdfDate.format(now);
+    return strDate;
   }
 }

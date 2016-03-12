@@ -9,7 +9,7 @@ public class SineGenerator {
 
   public static void main(String[] args) throws IOException {
     int samplingrate = 2500;
-    int f = 250;
+    int f = 350;
     InputWaveSine sine = new InputWaveSine(f, 0, samplingrate);
     OutputWaveSpeaker speaker = new OutputWaveSpeaker(samplingrate);
     for(int i = 0; i < samplingrate * 3; i++) {
