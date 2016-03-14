@@ -20,6 +20,8 @@ public class SignalInputStream extends InputStream {
   private int offset;
   private GoertzelParallelized[] goertzels;
   private GoertzelManager goertzelManager;
+  
+  public boolean stop = false;
 
   public SignalInputStream(InputWave in, SignalConfig config) {
     this.config = config;
@@ -108,6 +110,9 @@ public class SignalInputStream extends InputStream {
     int i = 0;
 
     while (true) {
+      if(stop) {
+        return;
+      }
       goertzelManager.processSample();
       int offset = goertzelManager.getOffset();
       GoertzelParallelized high = goertzels[offset * 2];

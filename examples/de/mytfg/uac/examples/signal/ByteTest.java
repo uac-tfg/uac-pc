@@ -26,7 +26,7 @@ public class ByteTest implements Runnable {
   public ByteTest() {
     config = new SignalConfig();
     config.put("samplingrate", 2500);
-    config.put("periodsperbit", 4);
+    config.put("periodsperbit", 10);
     
 //    config.put("modulation", "am");
 //    config.put("mainfrequency", 250);
@@ -35,7 +35,8 @@ public class ByteTest implements Runnable {
     config.put("modulation", "fm");
     config.put("frequency.high", 350);
     config.put("frequency.low", 250);
-    config.put("syncbits", "10011001110011010110000111001100");
+//    config.put("syncbits", "10011001110011010110000111001100");
+    config.put("syncbits", "1001100110011001");
 //    config.put("syncbits", "11110000111100001111000011110000");
     
     thread = new Thread(this);
