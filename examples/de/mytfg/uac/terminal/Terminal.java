@@ -32,10 +32,17 @@ public class Terminal implements Runnable {
 
   public Terminal() {
     config = new SignalConfig();
-    config.put("mainfrequency", 250);
     config.put("samplingrate", 2500);
-    config.put("periodsperbit", 3);
-    config.put("threshold", 0.00075d);
+    config.put("periodsperbit", 10);
+    
+//    config.put("modulation", "am");
+//    config.put("mainfrequency", 250);
+//    config.put("threshold", 100d);
+    
+    config.put("modulation", "fm");
+    config.put("frequency.high", 350);
+    config.put("frequency.low", 250);
+    config.put("syncbits", "1001100110011001");
 
     receiverThread = new Thread(this, "Receiver");
 
@@ -78,7 +85,7 @@ public class Terminal implements Runnable {
       // inSignal.synchronize();
       while (run) {
         inSignal.synchronize();
-        // inSignal.waitFor(START_BYTE);
+//        inSignal.waitFor(START_BYTE);
         byte read = (byte) inSignal.read();
         System.out.println(ByteUtil.toBitString(new byte[] {read}));
         if (read != START_BYTE) {

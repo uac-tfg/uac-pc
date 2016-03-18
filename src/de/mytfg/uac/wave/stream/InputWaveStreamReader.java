@@ -9,6 +9,7 @@ import de.mytfg.uac.util.ByteUtil;
 public class InputWaveStreamReader extends InputWave {
 
   private InputStream in;
+  private long sampleCounter = 0;
 
   public InputWaveStreamReader(InputStream in) {
     this.in = in;
@@ -20,7 +21,12 @@ public class InputWaveStreamReader extends InputWave {
       throw new EOFException();
     };
     double val = ByteUtil.toDouble(read);
+    sampleCounter++;
     return val;
+  }
+  
+  public long getPosition() {
+    return sampleCounter;
   }
 
 }

@@ -2,7 +2,7 @@ package de.mytfg.uac.wave.stream;
 
 import de.mytfg.uac.util.ComplexNumber;
 
-public class GoertzelParrallelized {
+public class GoertzelParallelized {
   
   private int frequency;
   private int offset;
@@ -14,11 +14,11 @@ public class GoertzelParrallelized {
   private double d1;
   private double d2;
   
-  private boolean enabled;
+  private boolean enabled = true;
   
   private ComplexNumber complex;
 
-  public GoertzelParrallelized(int frequency, int offset) {
+  public GoertzelParallelized(int frequency, int offset) {
     this.frequency = frequency;
     this.offset = offset;
   }
@@ -56,6 +56,10 @@ public class GoertzelParrallelized {
       return -1;
     }
     return (complex.getReal() * complex.getReal() + complex.getIma() * complex.getIma());
+  }
+  
+  public String toString() {
+    return "Goertzel " + frequency + " @ " + offset;
   }
 
   public int getFrequency() {
