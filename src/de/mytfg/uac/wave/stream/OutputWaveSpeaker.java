@@ -54,6 +54,7 @@ public class OutputWaveSpeaker extends OutputWave {
     pointer = 0;
   }
   
+  @Override
   public void close() {
     line.close();
   }

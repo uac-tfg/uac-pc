@@ -6,190 +6,116 @@ import java.util.Random;
 import de.mytfg.uac.signal.SignalConfig;
 import de.mytfg.uac.signal.SignalOutputStream;
 import de.mytfg.uac.util.ByteUtil;
+import de.mytfg.uac.wave.stream.OutputWaveCounter;
 import de.mytfg.uac.wave.stream.OutputWaveSpeaker;
 
 public class SendTest {
 
-	private static Random random;
+	static final int SAMPLING_RATE = 2500;
+	static final int DELAY = 1000;
+	static final int DATA_LENGTH = 4;
 	
-	public static void main(String[] args) {
+	private static Random random;
+	private static OutputWaveCounter counter;
+	
+	public static void main(String[] args) throws IOException {
 		long seed = new Random().nextLong();
 		random = new Random(seed);
 		
+		OutputWaveSpeaker speaker = new OutputWaveSpeaker(SAMPLING_RATE);
+		counter = new OutputWaveCounter(speaker);
+		
 		System.out.println("Test started at: " + System.currentTimeMillis());
-		sendStartSequence();
-//		System.out.println("Startbits");
-//		{
-//			System.out.println(System.currentTimeMillis());
-//		    SignalConfig config = new SignalConfig();
-//		    config.put("samplingrate", 2500);
-//		    config.put("periodsperbit", 40);
-//		    config.put("modulation", "fm");
-//		    config.put("frequency.high", 250);
-//		    config.put("frequency.low", 150);
-//		    config.put("syncbits", "10011001110011010110000111001100");
-//		    test(config, 50);
-//		}
-//		{
-//			System.out.println(System.currentTimeMillis());
-//		    SignalConfig config = new SignalConfig();
-//		    config.put("samplingrate", 2500);
-//		    config.put("periodsperbit", 40);
-//		    config.put("modulation", "fm");
-//		    config.put("frequency.high", 250);
-//		    config.put("frequency.low", 150);
-//		    config.put("syncbits", "10101010101010101010101010101010");
-//		    test(config, 50);
-//		}
-//		{
-//			System.out.println(System.currentTimeMillis());
-//		    SignalConfig config = new SignalConfig();
-//		    config.put("samplingrate", 2500);
-//		    config.put("periodsperbit", 40);
-//		    config.put("modulation", "fm");
-//		    config.put("frequency.high", 250);
-//		    config.put("frequency.low", 150);
-//		    config.put("syncbits", "11001100110011001100110011001100");
-//		    test(config, 50);
-//		}
-//		{
-//			System.out.println(System.currentTimeMillis());
-//		    SignalConfig config = new SignalConfig();
-//		    config.put("samplingrate", 2500);
-//		    config.put("periodsperbit", 40);
-//		    config.put("modulation", "fm");
-//		    config.put("frequency.high", 250);
-//		    config.put("frequency.low", 150);
-//		    config.put("syncbits", "10111011101110111011101110111011");
-//		    test(config, 50);
-//		}
-//		{
-//			System.out.println(System.currentTimeMillis());
-//		    SignalConfig config = new SignalConfig();
-//		    config.put("samplingrate", 2500);
-//		    config.put("periodsperbit", 40);
-//		    config.put("modulation", "fm");
-//		    config.put("frequency.high", 250);
-//		    config.put("frequency.low", 150);
-//		    config.put("syncbits", "11111110111111101111111011111110");
-//		    test(config, 50);
-//		}
-//		{
-//			System.out.println(System.currentTimeMillis());
-//		    SignalConfig config = new SignalConfig();
-//		    config.put("samplingrate", 2500);
-//		    config.put("periodsperbit", 40);
-//		    config.put("modulation", "fm");
-//		    config.put("frequency.high", 250);
-//		    config.put("frequency.low", 150);
-//		    config.put("syncbits", "00000001000000010000000100000001");
-//		    test(config, 50);
-//		}
-//		{
-//			System.out.println(System.currentTimeMillis());
-//		    SignalConfig config = new SignalConfig();
-//		    config.put("samplingrate", 2500);
-//		    config.put("periodsperbit", 40);
-//		    config.put("modulation", "fm");
-//		    config.put("frequency.high", 250);
-//		    config.put("frequency.low", 150);
-//		    config.put("syncbits", "11100011100011100011100011100011");
-//		    test(config, 50);
-//		}
-//		{
-//			System.out.println(System.currentTimeMillis());
-//		    SignalConfig config = new SignalConfig();
-//		    config.put("samplingrate", 2500);
-//		    config.put("periodsperbit", 40);
-//		    config.put("modulation", "fm");
-//		    config.put("frequency.high", 250);
-//		    config.put("frequency.low", 150);
-//		    config.put("syncbits", "10011001100110011001100110011001");
-//		    test(config, 50);
-//		}
+		sendStartSequence((byte) 10, 4);
 		{
-			System.out.println(System.currentTimeMillis());
-			System.out.println("Frequency constant ppb");
-			for(int i = 50; i <= 950; i += 100) {
+			for(int i = 50; i <= 950; i += 200) {
 				SignalConfig config = new SignalConfig();
-			    config.put("samplingrate", 2500);
-			    config.put("periodsperbit", 40);
+			    config.put("samplingrate", SAMPLING_RATE);
+			    config.put("periodsperbit", 4);
 			    config.put("modulation", "fm");
 			    config.put("frequency.high", i + 200);
 			    config.put("frequency.low", i);
 			    config.put("syncbits", "10011001110011010110000111001100");
-			    test(config, 100);
+			    test("Frequency constant ppb f=" + i, config, 10);
 			}
-			System.out.println(System.currentTimeMillis());
-			System.out.println("Frequency variable ppb");
-			for(int i = 50; i <= 950; i += 100) {
+			for(int i = 50; i <= 950; i += 200) {
 				SignalConfig config = new SignalConfig();
-			    config.put("samplingrate", 2500);
-			    config.put("periodsperbit", i / 3);
+			    config.put("samplingrate", SAMPLING_RATE);
+			    config.put("periodsperbit", i / 30);
 			    config.put("modulation", "fm");
 			    config.put("frequency.high", i + 200);
 			    config.put("frequency.low", i);
 			    config.put("syncbits", "10011001110011010110000111001100");
-			    test(config, 100);
+			    test("Frequency variable ppb f=" + i, config, 10);
 			}
 		}
+		
+		counter.close();
+		System.out.println("Total samples: " + counter.getCounter());
+		System.out.println("End time: " + System.currentTimeMillis());
 		
 		System.out.println("Seed: " + seed);
 	}
 	
-	private static void sendStartSequence() {
+	private static void sendStartSequence(byte count, int ppb) {
 		System.out.println("Start Sequence");
 		SignalConfig config = new SignalConfig();
-	    config.put("samplingrate", 2500);
-	    config.put("periodsperbit", 30);
+	    config.put("samplingrate", SAMPLING_RATE);
+	    config.put("periodsperbit", ppb);
 	    config.put("modulation", "fm");
 	    config.put("frequency.high", 700);
 	    config.put("frequency.low", 500);
 	    config.put("syncbits", "10011001110011010110000111001100");
 	    
-	    OutputWaveSpeaker speaker = new OutputWaveSpeaker(config.getInt("samplingrate"));
-		SignalOutputStream out = new SignalOutputStream(speaker, config);
+		@SuppressWarnings("resource")
+		SignalOutputStream out = new SignalOutputStream(counter, config);
 		
-		for(byte b = 0; b < 50; b++) {
+		for(byte b = 0; b < count; b++) {
+			System.out.print(b + "@" + counter.getCounter() + "-");
 			try {
-				System.out.println(b + "@" + System.currentTimeMillis());
 				out.synchronize();
 				out.write(new byte[] {b});
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			System.out.println(counter.getCounter());
+			try {
+				writeZero(DELAY);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
     }
 
-	public static void test(SignalConfig config, int count) {
-		System.out.println(System.currentTimeMillis());
-		System.out.println("=================================");
+	public static void test(String name, SignalConfig config, int count) {
+		System.out.println("=== " + name + " @ " + counter.getCounter() + " / " + System.currentTimeMillis() +" ===");
 		
-		OutputWaveSpeaker speaker = new OutputWaveSpeaker(config.getInt("samplingrate"));
-		SignalOutputStream out = new SignalOutputStream(speaker, config);
+		@SuppressWarnings("resource")
+		SignalOutputStream out = new SignalOutputStream(counter, config);
 		
 		for(int i = 0; i < count; i++) {
-			byte[] data = new byte[4];
+			byte[] data = new byte[DATA_LENGTH];
 			random.nextBytes(data);
-			System.out.println(System.currentTimeMillis() + " " + ByteUtil.toBitString(data));
+			System.out.print(ByteUtil.toBitString(data) + "@" + counter.getCounter() + "-");
 			try {
 				out.synchronize();
 				out.write(data);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			System.out.println(counter.getCounter());
 			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
+				writeZero(DELAY);
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
-		try {
-			out.close();
-			speaker.close();
-		} catch(IOException e) {
-			e.printStackTrace();
+	}
+	
+	static void writeZero(int ms) throws IOException {
+		int count = (int) (ms * (SAMPLING_RATE / 1000d));
+		for(int i = 0; i < count; i++) {
+			counter.writeSample(0);
 		}
 	}
 

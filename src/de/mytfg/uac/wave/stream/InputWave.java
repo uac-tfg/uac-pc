@@ -12,8 +12,8 @@ public abstract class InputWave {
     }
   }
   
-  public void skip(int length) throws IOException {
-    for(int i = 0; i < length; i++) {
+  public void skip(long l) throws IOException {
+    for(long i = 0; i < l; i++) {
       readSample();
     }
   }

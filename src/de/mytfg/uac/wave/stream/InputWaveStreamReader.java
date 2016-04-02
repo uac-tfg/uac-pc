@@ -10,6 +10,7 @@ public class InputWaveStreamReader extends InputWave {
 
   private InputStream in;
   private long sampleCounter = 0;
+  private long sampleLimit = Long.MAX_VALUE;
 
   public InputWaveStreamReader(InputStream in) {
     this.in = in;
@@ -22,11 +23,18 @@ public class InputWaveStreamReader extends InputWave {
     };
     double val = ByteUtil.toDouble(read);
     sampleCounter++;
+    if(sampleCounter >= sampleLimit) {
+    	throw new LimitExceededException();
+    }
     return val;
   }
   
   public long getPosition() {
     return sampleCounter;
+  }
+  
+  public void setLimit(long limit) {
+	  this.sampleLimit = limit;
   }
 
 }
